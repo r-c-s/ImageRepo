@@ -1,0 +1,16 @@
+C:\Users\current user\IdeaProjects\ImageRepo\src\main\java\imagerepo\models\ImageRecord.java
+C:\Users\current user\IdeaProjects\ImageRepo\src\main\java\imagerepo\services\exceptions\ImageTypeNotAllowedException.java
+C:\Users\current user\IdeaProjects\ImageRepo\src\main\java\imagerepo\repositories\ImageRecordsRepositoryCustom.java
+C:\Users\current user\IdeaProjects\ImageRepo\src\main\java\imagerepo\config\AwsConfig.java
+C:\Users\current user\IdeaProjects\ImageRepo\src\main\java\imagerepo\repositories\ImageRecordsRepositoryImpl.java
+C:\Users\current user\IdeaProjects\ImageRepo\src\main\java\imagerepo\services\S3ImageStorageService.java
+C:\Users\current user\IdeaProjects\ImageRepo\src\main\java\imagerepo\services\exceptions\NotAllowedToDeleteImageException.java
+C:\Users\current user\IdeaProjects\ImageRepo\src\main\java\imagerepo\config\SpringFoxConfig.java
+C:\Users\current user\IdeaProjects\ImageRepo\src\main\java\imagerepo\config\MongoConfig.java
+C:\Users\current user\IdeaProjects\ImageRepo\src\main\java\imagerepo\services\exceptions\ImageWithNameAlreadyExistsException.java
+C:\Users\current user\IdeaProjects\ImageRepo\src\main\java\imagerepo\repositories\ImageRecordsRepository.java
+C:\Users\current user\IdeaProjects\ImageRepo\src\main\java\imagerepo\services\ImageRepoService.java
+C:\Users\current user\IdeaProjects\ImageRepo\src\main\java\imagerepo\services\exceptions\ImageNotFoundException.java
+C:\Users\current user\IdeaProjects\ImageRepo\src\main\java\imagerepo\controllers\ImageRepoController.java
+C:\Users\current user\IdeaProjects\ImageRepo\src\main\java\imagerepo\ImageRepoApp.java
+C:\Users\current user\IdeaProjects\ImageRepo\src\main\java\imagerepo\services\ImageStorageService.java

@@ -1,0 +1,7 @@
+imagerepo\repositories\ImageRecordsRepositoryImplTest.class
+imagerepo\services\ImageRepoServiceTest.class
+imagerepo\services\S3ImageStorageServiceTest.class
+imagerepo\controllers\ImageRepoControllerTest.class
+imagerepo\ImageRepoAppIT.class
+imagerepo\testutils\MongoRepositoryTestBase.class
+imagerepo\ImageRepoAppIT$1.class
