@@ -101,8 +101,7 @@ public class ImageRepoAppIT {
         String expectedUrl = createUrl("/imagerepo/api/images/sandiego.jpg");
 
         assertThat(response.getStatusCodeValue()).isEqualTo(201);
-        assertThat(response.getHeaders().getLocation().toString())
-                .isEqualTo(expectedUrl);
+        assertThat(response.getHeaders().getLocation().toString()).isEqualTo(expectedUrl);
 
         ImageRecord record = response.getBody();
         assertThat(record.getName()).isEqualTo(filename);
@@ -146,7 +145,7 @@ public class ImageRepoAppIT {
         ResponseEntity<Resource> getImageResponse = getImageRequest(filename);
         assertThat(getImageResponse.getStatusCodeValue()).isEqualTo(404);
 
-        // sets record as 'deleted'
+        // record no longer exists
         ResponseEntity<List<ImageRecord>> getImagesResponse = getImagesRequest();
         assertThat(getImagesResponse.getBody().stream().filter(record -> record.getName().equals(filename)).findAny())
                 .isEmpty();
@@ -176,9 +175,8 @@ public class ImageRepoAppIT {
         assertThat(getImagesResponse.getBody()
                 .stream()
                 .filter(record -> record.getName().equals(filename))
-                .findFirst()
-                .get()
-                .getUploadStatus()).isEqualTo(ImageRecord.UploadStatus.succeeded);
+                .findFirst())
+                .isPresent();
     }
 
     @SneakyThrows
