@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -64,17 +65,17 @@ public class ImageRepoControllerTest {
 
     @Test
     @Parameters({
-            "succeeded | 201 | true",
-            "failed | 500 | false"
+            "succeeded | http://imagerepo.com/someimage.jpg | 201",
+            "failed | null | 500"
     })
     public void testUploadImage(
             ImageRecord.UploadStatus recordStatus,
-            int expectedHttpStatus,
-            boolean expectLocationHeader) throws URISyntaxException {
+            String url,
+            int expectedHttpStatus) throws URISyntaxException {
         // Arrange
         MultipartFile file = mock(MultipartFile.class);
         String userId = "userId";
-        String url = "http://localhost:8080/imagerepo/api/images/someimage.jpg";
+        url = url.equals("null") ? null : url;
 
         ImageRecord record = mock(ImageRecord.class);
         when(record.getUploadStatus()).thenReturn(recordStatus);
@@ -88,9 +89,8 @@ public class ImageRepoControllerTest {
         // Assert
         assertThat(actual.getStatusCodeValue()).isEqualTo(expectedHttpStatus);
         assertThat(actual.getBody()).isEqualTo(record);
-        if (expectLocationHeader) {
-            assertThat(actual.getHeaders().getLocation().toString()).isEqualTo(url);
-        }
+        assertThat(Optional.ofNullable(actual.getHeaders().getLocation()).map(Object::toString).orElse(null))
+                .isEqualTo(url);
     }
 
     @Test

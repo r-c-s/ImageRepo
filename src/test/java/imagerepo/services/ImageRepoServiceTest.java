@@ -6,13 +6,12 @@ import imagerepo.repositories.ImageRecordsRepository;
 import imagerepo.services.exceptions.ImageTypeNotAllowedException;
 import imagerepo.services.exceptions.ImageWithNameAlreadyExistsException;
 import imagerepo.services.exceptions.NotAllowedToDeleteImageException;
-import junitparams.JUnitParamsRunner;
-import junitparams.Parameters;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
 import org.springframework.core.io.Resource;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -23,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.*;
 
-@RunWith(JUnitParamsRunner.class)
+@RunWith(SpringJUnit4ClassRunner.class)
 public class ImageRepoServiceTest {
 
     private ImageRecordsRepository imageRecordsRepository;
@@ -77,14 +76,7 @@ public class ImageRepoServiceTest {
     }
 
     @Test
-    @Parameters({
-            "false | true | succeeded",
-            "true | false | failed"
-    })
-    public void testUploadImage(
-            boolean storageShouldFail,
-            boolean shouldReturnUrl,
-            ImageRecord.UploadStatus expectedUploadStatus) throws IOException {
+    public void testUploadImageHappyPath() throws IOException {
         // Arrange
         String userId = "userId";
         String filename = "filename";
@@ -95,24 +87,49 @@ public class ImageRepoServiceTest {
         when(file.getContentType()).thenReturn(type);
         when(file.getOriginalFilename()).thenReturn(filename);
 
-        ImageRecord repositoryResponse = new ImageRecord(filename, type, userId, timestamp, expectedUploadStatus, null);
-        when(imageRecordsRepository.updateStatus(filename, expectedUploadStatus))
+        ImageRecord repositoryResponse = new ImageRecord(filename, type, userId, timestamp, ImageRecord.UploadStatus.succeeded, null);
+        when(imageRecordsRepository.updateStatus(filename, ImageRecord.UploadStatus.succeeded))
                 .thenReturn(repositoryResponse);
-
-        if (storageShouldFail) {
-            doThrow(IOException.class).when(imageStorageService).save(file);
-        }
 
         // Act
         ImageRecord actual = target.uploadImage(userId, file, timestamp);
 
         // Assert
-        ImageRecord expected = withUrl(repositoryResponse, shouldReturnUrl ? "http://localhost:" + port + "/imagerepo/api/images/" + filename : null);
+        ImageRecord expected = withUrl(repositoryResponse, "http://localhost:" + port + "/imagerepo/api/images/" + filename);
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
 
         InOrder inOrder = inOrder(imageRecordsRepository, imageStorageService);
         inOrder.verify(imageStorageService).save(file);
-        inOrder.verify(imageRecordsRepository).updateStatus(filename, expectedUploadStatus);
+        inOrder.verify(imageRecordsRepository).updateStatus(filename, ImageRecord.UploadStatus.succeeded);
+    }
+
+    @Test
+    public void testUploadImageWhenStorageFails() throws IOException {
+        // Arrange
+        String userId = "userId";
+        String filename = "filename";
+        Date timestamp = new Date(123);
+        String type = "image/jpeg";
+
+        MultipartFile file = mock(MultipartFile.class);
+        when(file.getContentType()).thenReturn(type);
+        when(file.getOriginalFilename()).thenReturn(filename);
+
+        ImageRecord repositoryResponse = new ImageRecord(filename, type, userId, timestamp, ImageRecord.UploadStatus.failed, null);
+        when(imageRecordsRepository.updateStatus(filename, ImageRecord.UploadStatus.failed))
+                .thenReturn(repositoryResponse);
+
+        doThrow(IOException.class).when(imageStorageService).save(file);
+
+        // Act
+        ImageRecord actual = target.uploadImage(userId, file, timestamp);
+
+        // Assert
+        assertThat(actual).usingRecursiveComparison().isEqualTo(repositoryResponse);
+
+        InOrder inOrder = inOrder(imageRecordsRepository, imageStorageService);
+        inOrder.verify(imageStorageService).save(file);
+        inOrder.verify(imageRecordsRepository).updateStatus(filename, ImageRecord.UploadStatus.failed);
     }
 
     @Test
@@ -156,34 +173,40 @@ public class ImageRepoServiceTest {
     }
 
     @Test
-    @Parameters({
-            "requester | false",
-            "notRequester | true"
-    })
-    public void testDeleteImage(String ownerId, boolean expectThrow) throws IOException {
+    public void testDeleteImageHappyPath() throws IOException {
         // Arrange
         String userId = "requester";
         String name = "picture";
+
+        when(imageRecordsRepository.findByName(name))
+                .thenReturn(new ImageRecord(null, null, userId, null, null, null));
+
+        // Act
+        target.deleteImage(name, userId);
+
+        // Assert
+        verify(imageStorageService).delete(name);
+        verify(imageRecordsRepository).deleteById(name);
+    }
+
+    @Test
+    public void testDeleteImageNotAllowed() throws IOException {
+        // Arrange
+        String userId = "requester";
+        String ownerId = "ownderId";
+        String name = "picture";
+
         when(imageRecordsRepository.findByName(name))
                 .thenReturn(new ImageRecord(null, null, ownerId, null, null, null));
 
         // Act
-        if (expectThrow) {
-            assertThrows(
-                    NotAllowedToDeleteImageException.class,
-                    () ->  target.deleteImage(name, userId));
-        } else {
-            target.deleteImage(name, userId);
-        }
+        assertThrows(
+                NotAllowedToDeleteImageException.class,
+                () ->  target.deleteImage(name, userId));
 
         // Assert
-        if (expectThrow) {
-            verify(imageStorageService, never()).delete(any());
-            verify(imageRecordsRepository, never()).deleteById(any());
-        } else {
-            verify(imageStorageService).delete(name);
-            verify(imageRecordsRepository).deleteById(name);
-        }
+        verify(imageStorageService, never()).delete(any());
+        verify(imageRecordsRepository, never()).deleteById(any());
     }
 
     private static ImageRecord withUrl(ImageRecord record, String url) {
