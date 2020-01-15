@@ -2,17 +2,18 @@ package imagerepo.repositories;
 
 import imagerepo.models.ImageRecord;
 import imagerepo.testutils.MongoRepositoryTestBase;
+import junitparams.JUnitParamsRunner;
+import junitparams.Parameters;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(JUnitParamsRunner.class)
 public class ImageRecordsRepositoryImplTest extends MongoRepositoryTestBase {
 
     private MongoTemplate mongoTemplate;
@@ -43,6 +44,31 @@ public class ImageRecordsRepositoryImplTest extends MongoRepositoryTestBase {
         // Assert
         assertThat(updated).usingRecursiveComparison()
                 .isEqualTo(withStatus(existing, ImageRecord.UploadStatus.succeeded));
+    }
+
+    @Test
+    @Parameters({
+            "failed | false",
+            "succeeded | true",
+            "pending | true"
+    })
+    public void testExistsByNameAndIsPendingOrSucceeded(ImageRecord.UploadStatus status, boolean expectedResult) {
+        // Arrange
+        ImageRecord existing = new ImageRecord(
+                "image.png",
+                "image/png",
+                "userId",
+                new Date(1),
+                status,
+                null);
+
+        mongoTemplate.save(existing);
+
+        // Act
+        boolean actual = target.existsByNameAndIsPendingOrSucceeded(existing.getName());
+
+        // Assert
+        assertThat(actual).isEqualTo(expectedResult);
     }
 
     private ImageRecord withStatus(ImageRecord record, ImageRecord.UploadStatus uploadStatus) {

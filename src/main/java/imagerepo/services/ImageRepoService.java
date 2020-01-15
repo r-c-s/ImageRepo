@@ -6,7 +6,6 @@ import imagerepo.repositories.ImageRecordsRepository;
 import imagerepo.services.exceptions.ImageTypeNotAllowedException;
 import imagerepo.services.exceptions.ImageWithNameAlreadyExistsException;
 import imagerepo.services.exceptions.NotAllowedToDeleteImageException;
-import lombok.SneakyThrows;
 import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -68,7 +67,7 @@ public class ImageRepoService {
         }
 
         String filename = file.getOriginalFilename();
-        if (imageRecordsRepository.existsById(filename)) {
+        if (imageRecordsRepository.existsByNameAndIsPendingOrSucceeded(filename)) {
             throw new ImageWithNameAlreadyExistsException(filename);
         }
 

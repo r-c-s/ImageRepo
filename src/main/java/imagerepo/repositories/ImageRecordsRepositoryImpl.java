@@ -1,5 +1,6 @@
 package imagerepo.repositories;
 
+import com.google.common.collect.ImmutableSet;
 import imagerepo.models.ImageRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
@@ -25,6 +26,15 @@ public class ImageRecordsRepositoryImpl implements ImageRecordsRepositoryCustom 
                 Query.query(Criteria.where(ImageRecord.Fields.name).is(name)),
                 Update.update(ImageRecord.Fields.uploadStatus, uploadStatus),
                 FindAndModifyOptions.options().returnNew(true),
+                ImageRecord.class);
+    }
+
+    @Override
+    public boolean existsByNameAndIsPendingOrSucceeded(String name) {
+        return mongoTemplate.exists(
+                Query.query(Criteria.where(ImageRecord.Fields.name).is(name))
+                        .addCriteria(Criteria.where(ImageRecord.Fields.uploadStatus)
+                                .in(ImmutableSet.of(ImageRecord.UploadStatus.pending, ImageRecord.UploadStatus.succeeded))),
                 ImageRecord.class);
     }
 }
