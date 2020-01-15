@@ -3,10 +3,11 @@ package imagerepo;
 import com.google.common.collect.ImmutableList;
 import imagerepo.models.ImageRecord;
 import lombok.SneakyThrows;
-import org.junit.AfterClass;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
@@ -27,20 +28,26 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
-@TestPropertySource("classpath:test.properties")
+@TestPropertySource("file:${app.properties}")
 @ActiveProfiles("test")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class ImageRepoAppIT {
 
+    @Value("${server.host}")
+    private String host;
+
+    @Value("${server.port}")
+    private String port;
+
     private static final TestRestTemplate restTemplate = new TestRestTemplate();
 
     @Before
-    public void cleanup() {
+    public void cleanupBefore() {
         deleteAllImages();
     }
 
-    @AfterClass
-    public static void cleanupAfter() {
+    @After
+    public void cleanupAfter() {
         deleteAllImages();
     }
 
@@ -180,19 +187,19 @@ public class ImageRepoAppIT {
     }
 
     @SneakyThrows
-    private static String createUrl(String uri) {
-        return "http://localhost:8081" + uri;
+    private String createUrl(String uri) {
+        return "http://" + host + ":" + port + uri;
     }
 
     @SneakyThrows
-    private static Resource getResourceFile(String name) {
+    private Resource getResourceFile(String name) {
         ClassLoader classloader = Thread.currentThread().getContextClassLoader();
         String path = new URI(classloader.getResource(name).toString()).getPath();
         File file = new File(path);
         return new FileSystemResource(file);
     }
 
-    private static ResponseEntity<List<ImageRecord>> getImagesRequest() {
+    private ResponseEntity<List<ImageRecord>> getImagesRequest() {
         return restTemplate.exchange(
                 createUrl("/imagerepo/api/images/"),
                 HttpMethod.GET,
@@ -200,13 +207,13 @@ public class ImageRepoAppIT {
                 new ParameterizedTypeReference<List<ImageRecord>>() { });
     }
 
-    private static ResponseEntity<Resource> getImageRequest(String filename) {
+    private ResponseEntity<Resource> getImageRequest(String filename) {
         return restTemplate.getForEntity(
                 createUrl("/imagerepo/api/images/" + filename),
                 Resource.class);
     }
 
-    private static ResponseEntity<ImageRecord> uploadImageRequest(String filename, String userId) {
+    private ResponseEntity<ImageRecord> uploadImageRequest(String filename, String userId) {
         LinkedMultiValueMap<String, Resource> payload = new LinkedMultiValueMap<>();
         payload.put("file", ImmutableList.of(getResourceFile(filename)));
         HttpHeaders headers = new HttpHeaders();
@@ -218,7 +225,7 @@ public class ImageRepoAppIT {
                 ImageRecord.class);
     }
 
-    private static ResponseEntity<String> deleteImageRequest(String filename, String userId) {
+    private ResponseEntity<String> deleteImageRequest(String filename, String userId) {
         return restTemplate.exchange(
                 createUrl("/imagerepo/api/images/" + filename + "?userId=" + userId),
                 HttpMethod.DELETE,
@@ -226,7 +233,7 @@ public class ImageRepoAppIT {
                 String.class);
     }
 
-    private static void deleteAllImages() {
+    private void deleteAllImages() {
         ResponseEntity<List<ImageRecord>> images = getImagesRequest();
         images.getBody().forEach(record -> deleteImageRequest(record.getName(), record.getUserId()));
     }
