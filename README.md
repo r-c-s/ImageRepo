@@ -51,10 +51,10 @@ One of the two is required:
 ##### S3 properties
 
 <pre>
-accessKey=ACCESS_KEY
-secretKey=SECRET_KEY
-region=REGION
-s3.bucket=BUCKET
+amazon.aws.accessKey=ACCESS_KEY
+amazon.aws.secretKey=SECRET_KEY
+amazon.aws.region=REGION
+amazon.aws.s3.bucket=BUCKET
 </pre>
 
 ##### Local storage properties
