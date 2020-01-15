@@ -5,15 +5,12 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import imagerepo.services.exceptions.ImageNotFoundException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
-@Service
 public class S3ImageStorageService implements ImageStorageService {
 
     protected static ObjectMetadata defaultObjectMetadata = new ObjectMetadata();
@@ -21,7 +18,7 @@ public class S3ImageStorageService implements ImageStorageService {
     private AmazonS3 s3client;
     private String bucket;
 
-    public S3ImageStorageService(AmazonS3 s3client, @Value("${amazon.aws.s3.bucket}") String bucket) {
+    public S3ImageStorageService(AmazonS3 s3client, String bucket) {
         this.s3client = s3client;
         this.bucket = bucket;
     }
