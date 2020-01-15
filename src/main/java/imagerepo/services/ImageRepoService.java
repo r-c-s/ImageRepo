@@ -11,6 +11,7 @@ import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,6 +25,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@PropertySource(ignoreResourceNotFound = true, value = "file:${app.properties}")
 public class ImageRepoService {
 
     private static final Logger logger = LoggerFactory.getLogger(ImageRepoService.class);

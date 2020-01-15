@@ -4,56 +4,57 @@ A simple application for uploading images
 
 http://ec2-3-83-1-224.compute-1.amazonaws.com/imagerepo/swagger-ui.html
 
-##### BUILD
+<br>
+
+##### Build
 
 <pre>
 mvn clean package
 </pre>
 
-##### RUN UNIT TESTS
+##### Run unit tests
 
 <pre>
 mvn test
 </pre>
 
-##### RUN INTEGRATION TESTS USING S3
+##### Run integration tests
 
 <pre>
-mvn clean test-compile failsafe:integration-test \
-     -Damazon.aws.accessKey=ACCESS_KEY \
-     -Damazon.aws.secretKey=SECRET_KEY \
-     -Damazon.aws.region=REGION \
-     -Damazon.aws.s3.bucket=BUCKET
+mvn clean test-compile failsafe:integration-test -Dapp.properties=APP_PROPERTIES_FILE
 </pre>
 
-##### RUN INTEGRATION TESTS USING LOCAL STORAGE
+##### Run application
 
 <pre>
-mvn clean test-compile failsafe:integration-test \
-     -Dlocal.storage.dir=LOCAL_STORAGE_DIR
+java -jar "ImageRepo-1.0-SNAPSHOT.jar" --app.properties=APP_PROPERTIES_FILE 
 </pre>
 
-##### RUN APP USING S3
+TODO: steps to build trust store required for S3
+
+<br>
+
+#### APP PROPERTIES
+
+##### Base properties
 
 <pre>
-java -Djavax.net.ssl.trustStore=TRUST_STORE_FILE \
-     -Djavax.net.ssl.trustStorePassword=TRUST_STORE_PASSWORD \
-     -jar "ImageRepo-1.0-SNAPSHOT.jar" \
-     --spring.data.mongodb.uri=MONGO_URI \
-     --amazon.aws.accessKey=ACCESS_KEY \
-     --amazon.aws.secretKey=SECRET_KEY \
-     --amazon.aws.region=REGION \
-     --amazon.aws.s3.bucket=BUCKET \
-     --server.port=HOST \
-     --server.port=PORT
+spring.data.mongodb.uri=MONGODB_URI
+server.host=HOST
+server.port=PORT
 </pre>
 
-##### RUN APP USING LOCAL STORAGE
+##### S3 properties
 
 <pre>
-java -jar "ImageRepo-1.0-SNAPSHOT.jar" \
-     --spring.data.mongodb.uri=MONGO_URI \
-     --local.storage.dir=LOCAL_STORAGE_DIR \
-     --server.port=HOST \
-     --server.port=PORT
+accessKey=ACCESS_KEY
+secretKey=SECRET_KEY
+region=REGION
+s3.bucket=BUCKET
+</pre>
+
+##### Local properties
+
+<pre>
+local.storage.dir=LOCAL_STORAGE_DIR
 </pre>
