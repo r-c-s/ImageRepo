@@ -1,5 +1,7 @@
 A simple application for uploading images
 
+<br>
+
 ### API
 
 http://ec2-3-83-1-224.compute-1.amazonaws.com/imagerepo/swagger-ui.html
@@ -36,13 +38,15 @@ TODO: steps to build trust store required for S3
 
 #### APP PROPERTIES
 
-##### Base properties
+##### Base required properties
 
 <pre>
 spring.data.mongodb.uri=MONGODB_URI
 server.host=HOST
 server.port=PORT
 </pre>
+
+One of the two is required:
 
 ##### S3 properties
 
@@ -53,7 +57,7 @@ region=REGION
 s3.bucket=BUCKET
 </pre>
 
-##### Local properties
+##### Local storage properties
 
 <pre>
 local.storage.dir=LOCAL_STORAGE_DIR
