@@ -47,7 +47,7 @@ public class ImageRepoAppIT {
     @Test
     public void testGetImages() {
         // Arrange
-        String filename = "sandiego.jpg";
+        String filename = "san diego.jpg";
         String userId = "raphael";
 
         Date beforeUpload = new Date();
@@ -67,13 +67,13 @@ public class ImageRepoAppIT {
         assertThat(record.getUserId()).isEqualTo(userId);
         assertThat(record.getDateUploaded()).isBetween(beforeUpload, afterUpload);
         assertThat(record.getUploadStatus()).isEqualTo(ImageRecord.UploadStatus.succeeded);
-        assertThat(record.getUrl()).isEqualTo(createUrl("/imagerepo/api/images/" + filename));
+        assertThat(record.getUrl()).isEqualTo(createUrl("/imagerepo/api/images/san+diego.jpg"));
     }
 
     @Test
     public void testGetImage() throws IOException {
         // Arrange
-        String filename = "sandiego.jpg";
+        String filename = "san diego.jpg";
         String userId = "raphael";
 
         uploadImageRequest(filename, userId);
@@ -89,7 +89,7 @@ public class ImageRepoAppIT {
     @Test
     public void testUploadImageHappyPath() {
         // Arrange
-        String filename = "sandiego.jpg";
+        String filename = "san diego.jpg";
         String userId = "raphael";
 
         // Act
@@ -98,7 +98,7 @@ public class ImageRepoAppIT {
         Date afterUpload = new Date();
 
         // Assert
-        String expectedUrl = createUrl("/imagerepo/api/images/sandiego.jpg");
+        String expectedUrl = createUrl("/imagerepo/api/images/san+diego.jpg");
 
         assertThat(response.getStatusCodeValue()).isEqualTo(201);
         assertThat(response.getHeaders().getLocation().toString()).isEqualTo(expectedUrl);
@@ -115,7 +115,7 @@ public class ImageRepoAppIT {
     @Test
     public void testUploadImageAlreadyExists() {
         // Arrange
-        String filename = "sandiego.jpg";
+        String filename = "san diego.jpg";
         String userId = "raphael";
 
         uploadImageRequest(filename, userId);
@@ -130,7 +130,7 @@ public class ImageRepoAppIT {
     @Test
     public void testDeleteImageHappyPath() {
         // Arrange
-        String filename = "sandiego.jpg";
+        String filename = "san diego.jpg";
         String userId = "raphael";
 
         uploadImageRequest(filename, userId);
@@ -156,7 +156,7 @@ public class ImageRepoAppIT {
         // Arrange
         String userId = "raphael";
         String differentUserId = "laura";
-        String filename = "sandiego.jpg";
+        String filename = "san diego.jpg";
 
         uploadImageRequest(filename, userId);
 

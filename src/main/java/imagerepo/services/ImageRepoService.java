@@ -6,6 +6,7 @@ import imagerepo.repositories.ImageRecordsRepository;
 import imagerepo.services.exceptions.ImageTypeNotAllowedException;
 import imagerepo.services.exceptions.ImageWithNameAlreadyExistsException;
 import imagerepo.services.exceptions.NotAllowedToDeleteImageException;
+import lombok.SneakyThrows;
 import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -115,7 +117,8 @@ public class ImageRepoService {
                         : null);
     }
 
+    @SneakyThrows
     private String buildUrl(String name) {
-        return "http://" + host + ":" + port + "/imagerepo/api/images/" + name;
+        return "http://" + host + ":" + port + "/imagerepo/api/images/" + URLEncoder.encode(name, "UTF-8");
     }
 }
