@@ -116,7 +116,6 @@ public class ImageRepoService {
                         : null);
     }
 
-    @SneakyThrows
     private String buildUrl(String name) {
         return "http://" + host + ":" + port + "/imagerepo/api/images/" + name;
     }
