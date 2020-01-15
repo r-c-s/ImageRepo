@@ -25,7 +25,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-@PropertySource(ignoreResourceNotFound = true, value = "file:${app.properties}")
+@PropertySource(value = "file:${app.properties}")
 public class ImageRepoService {
 
     private static final Logger logger = LoggerFactory.getLogger(ImageRepoService.class);

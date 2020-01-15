@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
 @Configuration
-@PropertySource(ignoreResourceNotFound = true, value = "file:${app.properties}")
+@PropertySource(value = "file:${app.properties}")
 @Getter
 public class AwsConfig {
 
