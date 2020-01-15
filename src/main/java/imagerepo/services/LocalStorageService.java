@@ -1,6 +1,7 @@
 package imagerepo.services;
 
 import imagerepo.services.exceptions.ImageNotFoundException;
+import imagerepo.services.utils.FileFactory;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;

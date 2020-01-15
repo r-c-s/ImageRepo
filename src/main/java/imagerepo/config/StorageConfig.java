@@ -5,7 +5,7 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import imagerepo.services.FileFactory;
+import imagerepo.services.utils.FileFactory;
 import imagerepo.services.ImageStorageService;
 import imagerepo.services.LocalStorageService;
 import imagerepo.services.S3ImageStorageService;

@@ -1,6 +1,7 @@
 package imagerepo.services;
 
 import imagerepo.services.exceptions.ImageNotFoundException;
+import imagerepo.services.utils.FileFactory;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import org.junit.Before;

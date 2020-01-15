@@ -1,4 +1,4 @@
-package imagerepo.services;
+package imagerepo.services.utils;
 
 import java.io.File;
 
