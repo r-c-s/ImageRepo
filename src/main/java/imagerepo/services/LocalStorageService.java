@@ -1,7 +1,6 @@
 package imagerepo.services;
 
 import imagerepo.services.exceptions.ImageNotFoundException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
@@ -14,9 +13,7 @@ public class LocalStorageService implements ImageStorageService {
     private String storageDir;
     private FileFactory fileFactory;
 
-    public LocalStorageService(
-            @Value("${storageDir}") String storageDir,
-            FileFactory fileFactory) {
+    public LocalStorageService(String storageDir, FileFactory fileFactory) {
         this.storageDir = storageDir;
         this.fileFactory = fileFactory;
     }
