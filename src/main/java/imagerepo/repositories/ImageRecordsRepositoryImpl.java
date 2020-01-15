@@ -30,7 +30,7 @@ public class ImageRecordsRepositoryImpl implements ImageRecordsRepositoryCustom 
     }
 
     @Override
-    public boolean existsByNameAndIsPendingOrSucceeded(String name) {
+    public boolean isPendingOrSucceeded(String name) {
         return mongoTemplate.exists(
                 Query.query(Criteria.where(ImageRecord.Fields.name).is(name))
                         .addCriteria(Criteria.where(ImageRecord.Fields.uploadStatus)

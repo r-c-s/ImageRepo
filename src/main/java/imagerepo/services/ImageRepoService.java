@@ -69,7 +69,7 @@ public class ImageRepoService {
         }
 
         String filename = file.getOriginalFilename();
-        if (imageRecordsRepository.existsByNameAndIsPendingOrSucceeded(filename)) {
+        if (imageRecordsRepository.isPendingOrSucceeded(filename)) {
             throw new ImageWithNameAlreadyExistsException(filename);
         }
 

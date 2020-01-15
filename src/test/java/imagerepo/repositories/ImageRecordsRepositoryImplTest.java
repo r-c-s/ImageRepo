@@ -65,7 +65,7 @@ public class ImageRecordsRepositoryImplTest extends MongoRepositoryTestBase {
         mongoTemplate.save(existing);
 
         // Act
-        boolean actual = target.existsByNameAndIsPendingOrSucceeded(existing.getName());
+        boolean actual = target.isPendingOrSucceeded(existing.getName());
 
         // Assert
         assertThat(actual).isEqualTo(expectedResult);

@@ -144,7 +144,7 @@ public class ImageRepoServiceTest {
         when(file.getContentType()).thenReturn(type);
         when(file.getOriginalFilename()).thenReturn(filename);
 
-        when(imageRecordsRepository.existsByNameAndIsPendingOrSucceeded(filename))
+        when(imageRecordsRepository.isPendingOrSucceeded(filename))
                 .thenReturn(true);
 
         // Act & Assert
