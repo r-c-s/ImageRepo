@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 
 @Configuration
-@PropertySource(value = "file:${app.properties}")
+@PropertySource("file:${app.properties}")
 public class MongoConfig {
 
     @Value("${spring.data.mongodb.uri}")

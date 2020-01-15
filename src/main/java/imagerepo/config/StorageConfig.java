@@ -20,7 +20,7 @@ import java.io.File;
 import java.util.Optional;
 
 @Configuration
-@PropertySource(value = "file:${app.properties}")
+@PropertySource("file:${app.properties}")
 public class StorageConfig {
 
     @Autowired
