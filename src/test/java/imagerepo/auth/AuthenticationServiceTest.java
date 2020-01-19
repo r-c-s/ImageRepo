@@ -66,6 +66,6 @@ public class AuthenticationServiceTest {
         HttpServletRequest actual = target.authenticate(request);
 
         // Assert
-        assertThat(actual).isExactlyInstanceOf(HttpServletRequest.class);
+        assertThat(actual).isNotInstanceOf(AuthenticatedHttpServletRequest.class);
     }
 }
