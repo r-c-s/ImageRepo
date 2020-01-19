@@ -29,7 +29,7 @@ public class ImageRecord {
     @Id
     private String name;
     private String type;
-    private String userId;
+    private String username;
     private Date dateUploaded;
     private UploadStatus uploadStatus;
     @Transient

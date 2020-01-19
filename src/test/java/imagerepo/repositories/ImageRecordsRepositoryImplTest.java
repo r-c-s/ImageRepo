@@ -75,7 +75,7 @@ public class ImageRecordsRepositoryImplTest extends MongoRepositoryTestBase {
         return new ImageRecord(
                 record.getName(),
                 record.getType(),
-                record.getUserId(),
+                record.getUsername(),
                 record.getDateUploaded(),
                 uploadStatus,
                 record.getUrl());

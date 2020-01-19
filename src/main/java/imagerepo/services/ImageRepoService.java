@@ -1,6 +1,7 @@
 package imagerepo.services;
 
 import com.google.common.collect.ImmutableSet;
+import imagerepo.auth.models.AuthenticatedUser;
 import imagerepo.models.ImageRecord;
 import imagerepo.repositories.ImageRecordsRepository;
 import imagerepo.services.exceptions.ImageTypeNotAllowedException;
@@ -64,7 +65,7 @@ public class ImageRepoService {
     }
 
     @Transactional
-    public ImageRecord uploadImage(String userId, MultipartFile file, Date timestamp) {
+    public ImageRecord uploadImage(AuthenticatedUser user, MultipartFile file, Date timestamp) {
         String contentType = file.getContentType();
         if (!allowedContentTypes.contains(contentType)) {
             throw new ImageTypeNotAllowedException(contentType, allowedContentTypes);
@@ -78,7 +79,7 @@ public class ImageRepoService {
         ImageRecord record = new ImageRecord(
                 filename,
                 contentType,
-                userId,
+                user.getUsername(),
                 timestamp,
                 ImageRecord.UploadStatus.pending,
                 null);
@@ -98,11 +99,15 @@ public class ImageRepoService {
     }
 
     @Transactional
-    public void deleteImage(String filename, String userId) throws IOException {
-        boolean userIsOwnerOfImage = userId.equals(imageRecordsRepository.findByName(filename).getUserId());
-        if (!userIsOwnerOfImage) {
-            throw new NotAllowedToDeleteImageException(userId, filename);
+    public void deleteImage(String filename, AuthenticatedUser user) throws IOException {
+        // todo: this logic shouldn't be here
+        boolean canDelete = user.getAuthorities().contains("ROLE_ADMIN")
+                || user.getUsername().equals(imageRecordsRepository.findByName(filename).getUsername());
+
+        if (!canDelete) {
+            throw new NotAllowedToDeleteImageException(user.getUsername(), filename);
         }
+
         imageStorageService.delete(filename);
         imageRecordsRepository.deleteById(filename);
     }
@@ -111,7 +116,7 @@ public class ImageRepoService {
         return new ImageRecord(
                 imageRecord.getName(),
                 imageRecord.getType(),
-                imageRecord.getUserId(),
+                imageRecord.getUsername(),
                 imageRecord.getDateUploaded(),
                 imageRecord.getUploadStatus(),
                 ImageRecord.UploadStatus.succeeded.equals(imageRecord.getUploadStatus())

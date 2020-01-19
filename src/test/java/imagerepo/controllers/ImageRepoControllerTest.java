@@ -1,6 +1,8 @@
 package imagerepo.controllers;
 
 import com.google.common.collect.ImmutableList;
+import imagerepo.auth.AuthenticatedHttpServletRequest;
+import imagerepo.auth.models.AuthenticatedUser;
 import imagerepo.models.ImageRecord;
 import imagerepo.services.ImageRepoService;
 import junitparams.JUnitParamsRunner;
@@ -74,17 +76,20 @@ public class ImageRepoControllerTest {
             int expectedHttpStatus) throws URISyntaxException {
         // Arrange
         MultipartFile file = mock(MultipartFile.class);
-        String userId = "userId";
         url = url.equals("null") ? null : url;
+
+        AuthenticatedUser user = mock(AuthenticatedUser.class);
+        AuthenticatedHttpServletRequest mockRequest = mock(AuthenticatedHttpServletRequest.class);
+        when(mockRequest.getLoggedInUser()).thenReturn(user);
 
         ImageRecord record = mock(ImageRecord.class);
         when(record.getUploadStatus()).thenReturn(recordStatus);
         when(record.getUrl()).thenReturn(url);
 
-        when(service.uploadImage(eq(userId), eq(file), any())).thenReturn(record);
+        when(service.uploadImage(eq(user), eq(file), any())).thenReturn(record);
 
         // Act
-        ResponseEntity<ImageRecord> actual = target.uploadImage(file, userId);
+        ResponseEntity<ImageRecord> actual = target.uploadImage(file, mockRequest);
 
         // Assert
         assertThat(actual.getStatusCodeValue()).isEqualTo(expectedHttpStatus);
@@ -99,11 +104,15 @@ public class ImageRepoControllerTest {
         String name = "filename";
         String userId = "userId";
 
+        AuthenticatedUser user = mock(AuthenticatedUser.class);
+        AuthenticatedHttpServletRequest mockRequest = mock(AuthenticatedHttpServletRequest.class);
+        when(mockRequest.getLoggedInUser()).thenReturn(user);
+
         // Act
-        ResponseEntity<Void> actual = target.deleteImage(name, userId);
+        ResponseEntity<Void> actual = target.deleteImage(name, mockRequest);
 
         // Assert
         assertThat(actual.getStatusCodeValue()).isEqualTo(204);
-        verify(service).deleteImage(name, userId);
+        verify(service).deleteImage(name, user);
     }
 }

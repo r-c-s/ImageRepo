@@ -1,6 +1,7 @@
 package imagerepo;
 
 import com.google.common.collect.ImmutableList;
+import imagerepo.auth.AuthenticationService;
 import imagerepo.models.ImageRecord;
 import lombok.SneakyThrows;
 import org.junit.After;
@@ -18,12 +19,15 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -33,21 +37,27 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 public class ImageRepoAppIT {
 
+    @Value("${userA.username}") private String userAUserName;
+    @Value("${userA.password}") private String userAPassword;
+    @Value("${userB.username}") private String userBUsername;
+    @Value("${userB.password}") private String userBPassword;
+    @Value("${admin.username}") private String adminUsername;
+    @Value("${admin.password}") private String adminPassword;
+
     @Value("${server.host}")
     private String host;
 
     @Value("${server.port}")
     private String port;
 
+    @Value("${services.auth.login}")
+    private String authServiceLoginUrl;
+
     private static final TestRestTemplate restTemplate = new TestRestTemplate();
 
     @Before
-    public void cleanupBefore() {
-        deleteAllImages();
-    }
-
     @After
-    public void cleanupAfter() {
+    public void cleanup() {
         deleteAllImages();
     }
 
@@ -55,10 +65,9 @@ public class ImageRepoAppIT {
     public void testGetImages() {
         // Arrange
         String filename = "san diego.jpg";
-        String userId = "raphael";
 
         Date beforeUpload = new Date();
-        uploadImageRequest(filename, userId);
+        uploadImageRequest(userAUserName, userAPassword, filename);
         Date afterUpload = new Date();
 
         // Act
@@ -71,7 +80,7 @@ public class ImageRepoAppIT {
         ImageRecord record = records.get(0);
         assertThat(record.getName()).isEqualTo(filename);
         assertThat(record.getType()).isEqualTo("image/jpeg");
-        assertThat(record.getUserId()).isEqualTo(userId);
+        assertThat(record.getUsername()).isEqualTo(userAUserName);
         assertThat(record.getDateUploaded()).isBetween(beforeUpload, afterUpload);
         assertThat(record.getUploadStatus()).isEqualTo(ImageRecord.UploadStatus.succeeded);
         assertThat(record.getUrl()).isEqualTo(createUrl("/imagerepo/api/images/san+diego.jpg"));
@@ -81,9 +90,7 @@ public class ImageRepoAppIT {
     public void testGetImage() throws IOException {
         // Arrange
         String filename = "san diego.jpg";
-        String userId = "raphael";
-
-        uploadImageRequest(filename, userId);
+        uploadImageRequest(userAUserName, userAPassword, filename);
 
         // Act
         ResponseEntity<Resource> response = getImageRequest(filename);
@@ -97,11 +104,10 @@ public class ImageRepoAppIT {
     public void testUploadImageHappyPath() {
         // Arrange
         String filename = "san diego.jpg";
-        String userId = "raphael";
 
         // Act
         Date beforeUpload = new Date();
-        ResponseEntity<ImageRecord> response = uploadImageRequest(filename, userId);
+        ResponseEntity<ImageRecord> response = uploadImageRequest(userAUserName, userAPassword, filename);
         Date afterUpload = new Date();
 
         // Assert
@@ -113,7 +119,7 @@ public class ImageRepoAppIT {
         ImageRecord record = response.getBody();
         assertThat(record.getName()).isEqualTo(filename);
         assertThat(record.getType()).isEqualTo("image/jpeg");
-        assertThat(record.getUserId()).isEqualTo(userId);
+        assertThat(record.getUsername()).isEqualTo(userAUserName);
         assertThat(record.getDateUploaded()).isBetween(beforeUpload, afterUpload);
         assertThat(record.getUploadStatus()).isEqualTo(ImageRecord.UploadStatus.succeeded);
         assertThat(record.getUrl()).isEqualTo(expectedUrl);
@@ -123,12 +129,10 @@ public class ImageRepoAppIT {
     public void testUploadImageAlreadyExists() {
         // Arrange
         String filename = "san diego.jpg";
-        String userId = "raphael";
-
-        uploadImageRequest(filename, userId);
+        uploadImageRequest(userAUserName, userAPassword, filename);
 
         // Act
-        ResponseEntity<ImageRecord> response = uploadImageRequest(filename, userId);
+        ResponseEntity<ImageRecord> response = uploadImageRequest(userAUserName, userAPassword, filename);
 
         // Assert
         assertThat(response.getStatusCodeValue()).isEqualTo(409);
@@ -138,12 +142,10 @@ public class ImageRepoAppIT {
     public void testDeleteImageHappyPath() {
         // Arrange
         String filename = "san diego.jpg";
-        String userId = "raphael";
-
-        uploadImageRequest(filename, userId);
+        uploadImageRequest(userAUserName, userAPassword, filename);
 
         // Act
-        ResponseEntity<String> response = deleteImageRequest(filename, userId);
+        ResponseEntity<String> response = deleteImageRequest(userAUserName, userAPassword, filename);
 
         // Assert
         assertThat(response.getStatusCodeValue()).isEqualTo(204);
@@ -159,16 +161,14 @@ public class ImageRepoAppIT {
     }
 
     @Test
-    public void testDeleteImageNotAllowed() {
+    public void testNotAllowedToDeleteOtherUsersImages() {
         // Arrange
-        String userId = "raphael";
-        String differentUserId = "laura";
         String filename = "san diego.jpg";
 
-        uploadImageRequest(filename, userId);
+        uploadImageRequest(userAUserName, userAPassword, filename);
 
         // Act
-        ResponseEntity<String> response = deleteImageRequest(filename, differentUserId);
+        ResponseEntity<String> response = deleteImageRequest(userBUsername, userBPassword, filename);
 
         // Assert
         assertThat(response.getStatusCodeValue()).isEqualTo(403);
@@ -186,6 +186,28 @@ public class ImageRepoAppIT {
                 .isPresent();
     }
 
+    @Test
+    public void testAdminsCanDeleteAnyImage() {
+        // Arrange
+        String filename = "san diego.jpg";
+        uploadImageRequest(userAUserName, userAPassword, filename);
+
+        // Act
+        ResponseEntity<String> response = deleteImageRequest(adminUsername, adminPassword, filename);
+
+        // Assert
+        assertThat(response.getStatusCodeValue()).isEqualTo(204);
+
+        // no longer exists in storage
+        ResponseEntity<Resource> getImageResponse = getImageRequest(filename);
+        assertThat(getImageResponse.getStatusCodeValue()).isEqualTo(404);
+
+        // record no longer exists
+        ResponseEntity<List<ImageRecord>> getImagesResponse = getImagesRequest();
+        assertThat(getImagesResponse.getBody().stream().filter(record -> record.getName().equals(filename)).findAny())
+                .isEmpty();
+    }
+
     @SneakyThrows
     private String createUrl(String uri) {
         return "http://" + host + ":" + port + uri;
@@ -197,6 +219,36 @@ public class ImageRepoAppIT {
         String path = new URI(classloader.getResource(name).toString()).getPath();
         File file = new File(path);
         return new FileSystemResource(file);
+    }
+
+    private void deleteAllImages() {
+        getImagesRequest().getBody().stream()
+                .map(ImageRecord::getName)
+                .forEach(name -> deleteImageRequest(adminUsername, adminPassword, name));
+    }
+
+    public String login(String username, String password) {
+        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
+        params.set("username", username);
+        params.set("password", password);
+
+        HttpEntity<MultiValueMap<String, Object>> entity = new HttpEntity<>(params, new HttpHeaders());
+
+        ResponseEntity<Void> response = restTemplate.exchange(
+                authServiceLoginUrl,
+                HttpMethod.POST,
+                entity,
+                Void.class);
+
+        return getCookieValue(
+                AuthenticationService.authTokenName,
+                response.getHeaders().get("Set-Cookie").get(0));
+    }
+
+    private String getCookieValue(String cookieName, String setCookieHeader) {
+        Pattern pattern = Pattern.compile(cookieName + "=(.*?);");
+        Matcher matcher = pattern.matcher(setCookieHeader);
+        return matcher.find() ? matcher.group(1) : null;
     }
 
     private ResponseEntity<List<ImageRecord>> getImagesRequest() {
@@ -213,28 +265,35 @@ public class ImageRepoAppIT {
                 Resource.class);
     }
 
-    private ResponseEntity<ImageRecord> uploadImageRequest(String filename, String userId) {
+    private ResponseEntity<ImageRecord> uploadImageRequest(String username, String password, String filename) {
         LinkedMultiValueMap<String, Resource> payload = new LinkedMultiValueMap<>();
         payload.put("file", ImmutableList.of(getResourceFile(filename)));
+
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+
+        String authToken = login(username, password);
+        headers.add("Cookie", AuthenticationService.authTokenName + "=" + authToken);
+
         HttpEntity<LinkedMultiValueMap<String, Resource>> request = new HttpEntity<>(payload, headers);
+
         return restTemplate.postForEntity(
-                createUrl("/imagerepo/api/images?userId=" + userId),
+                createUrl("/imagerepo/api/images"),
                 request,
                 ImageRecord.class);
     }
 
-    private ResponseEntity<String> deleteImageRequest(String filename, String userId) {
-        return restTemplate.exchange(
-                createUrl("/imagerepo/api/images/" + filename + "?userId=" + userId),
-                HttpMethod.DELETE,
-                null,
-                String.class);
-    }
+    private ResponseEntity<String> deleteImageRequest(String username, String password, String filename) {
+        HttpHeaders headers = new HttpHeaders();
+        String authToken = login(username, password);
+        headers.add("Cookie", AuthenticationService.authTokenName + "=" + authToken);
 
-    private void deleteAllImages() {
-        ResponseEntity<List<ImageRecord>> images = getImagesRequest();
-        images.getBody().forEach(record -> deleteImageRequest(record.getName(), record.getUserId()));
+        HttpEntity<Object> request = new HttpEntity<>(null, headers);
+
+        return restTemplate.exchange(
+                createUrl("/imagerepo/api/images/" + filename),
+                HttpMethod.DELETE,
+                request,
+                String.class);
     }
 }

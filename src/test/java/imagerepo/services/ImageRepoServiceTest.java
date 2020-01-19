@@ -1,6 +1,7 @@
 package imagerepo.services;
 
 import com.google.common.collect.ImmutableList;
+import imagerepo.auth.models.AuthenticatedUser;
 import imagerepo.models.ImageRecord;
 import imagerepo.repositories.ImageRecordsRepository;
 import imagerepo.services.exceptions.ImageTypeNotAllowedException;
@@ -44,9 +45,9 @@ public class ImageRepoServiceTest {
     public void testGetImages() {
         // Arrange
         List<ImageRecord> repositoryResponse = ImmutableList.of(
-                new ImageRecord("image1.jpg", "image/jpeg", "userId", new Date(1), ImageRecord.UploadStatus.succeeded, null),
-                new ImageRecord("image2.jpg", "image/jpeg", "userId", new Date(2), ImageRecord.UploadStatus.pending, null),
-                new ImageRecord("image2.jpg", "image/jpeg", "userId", new Date(2), ImageRecord.UploadStatus.failed, null));
+                new ImageRecord("image1.jpg", "image/jpeg", "username", new Date(1), ImageRecord.UploadStatus.succeeded, null),
+                new ImageRecord("image2.jpg", "image/jpeg", "username", new Date(2), ImageRecord.UploadStatus.pending, null),
+                new ImageRecord("image2.jpg", "image/jpeg", "username", new Date(2), ImageRecord.UploadStatus.failed, null));
 
         when(imageRecordsRepository.findAll()).thenReturn(repositoryResponse);
 
@@ -55,9 +56,9 @@ public class ImageRepoServiceTest {
 
         // Assert
         List<ImageRecord> expected = ImmutableList.of(
-                new ImageRecord("image1.jpg", "image/jpeg", "userId", new Date(1), ImageRecord.UploadStatus.succeeded, "http://localhost:" + port + "/imagerepo/api/images/image1.jpg"),
-                new ImageRecord("image2.jpg", "image/jpeg", "userId", new Date(2), ImageRecord.UploadStatus.pending, null),
-                new ImageRecord("image2.jpg", "image/jpeg", "userId", new Date(2), ImageRecord.UploadStatus.failed, null));
+                new ImageRecord("image1.jpg", "image/jpeg", "username", new Date(1), ImageRecord.UploadStatus.succeeded, "http://localhost:" + port + "/imagerepo/api/images/image1.jpg"),
+                new ImageRecord("image2.jpg", "image/jpeg", "username", new Date(2), ImageRecord.UploadStatus.pending, null),
+                new ImageRecord("image2.jpg", "image/jpeg", "username", new Date(2), ImageRecord.UploadStatus.failed, null));
 
         assertThat(actual).usingFieldByFieldElementComparator().isEqualTo(expected);
     }
@@ -78,21 +79,25 @@ public class ImageRepoServiceTest {
     @Test
     public void testUploadImageHappyPath() throws IOException {
         // Arrange
-        String userId = "userId";
+        String username = "username";
         String filename = "filename";
         Date timestamp = new Date(123);
         String type = "image/jpeg";
+
+        AuthenticatedUser user = mock(AuthenticatedUser.class);
+        when(user.getUsername()).thenReturn(username);
 
         MultipartFile file = mock(MultipartFile.class);
         when(file.getContentType()).thenReturn(type);
         when(file.getOriginalFilename()).thenReturn(filename);
 
-        ImageRecord repositoryResponse = new ImageRecord(filename, type, userId, timestamp, ImageRecord.UploadStatus.succeeded, null);
+        ImageRecord repositoryResponse = new ImageRecord(
+                filename, type, username, timestamp, ImageRecord.UploadStatus.succeeded, null);
         when(imageRecordsRepository.updateStatus(filename, ImageRecord.UploadStatus.succeeded))
                 .thenReturn(repositoryResponse);
 
         // Act
-        ImageRecord actual = target.uploadImage(userId, file, timestamp);
+        ImageRecord actual = target.uploadImage(user, file, timestamp);
 
         // Assert
         ImageRecord expected = withUrl(repositoryResponse, "http://localhost:" + port + "/imagerepo/api/images/" + filename);
@@ -106,23 +111,26 @@ public class ImageRepoServiceTest {
     @Test
     public void testUploadImageWhenStorageFails() throws IOException {
         // Arrange
-        String userId = "userId";
+        String username = "username";
         String filename = "filename";
         Date timestamp = new Date(123);
         String type = "image/jpeg";
+
+        AuthenticatedUser user = mock(AuthenticatedUser.class);
+        when(user.getUsername()).thenReturn(username);
 
         MultipartFile file = mock(MultipartFile.class);
         when(file.getContentType()).thenReturn(type);
         when(file.getOriginalFilename()).thenReturn(filename);
 
-        ImageRecord repositoryResponse = new ImageRecord(filename, type, userId, timestamp, ImageRecord.UploadStatus.failed, null);
+        ImageRecord repositoryResponse = new ImageRecord(filename, type, username, timestamp, ImageRecord.UploadStatus.failed, null);
         when(imageRecordsRepository.updateStatus(filename, ImageRecord.UploadStatus.failed))
                 .thenReturn(repositoryResponse);
 
         doThrow(IOException.class).when(imageStorageService).save(file);
 
         // Act
-        ImageRecord actual = target.uploadImage(userId, file, timestamp);
+        ImageRecord actual = target.uploadImage(user, file, timestamp);
 
         // Assert
         assertThat(actual).usingRecursiveComparison().isEqualTo(repositoryResponse);
@@ -135,10 +143,13 @@ public class ImageRepoServiceTest {
     @Test
     public void testUploadImageAlreadyExists() {
         // Arrange
-        String userId = "userId";
+        String username = "username";
         String filename = "filename";
         Date timestamp = new Date(123);
         String type = "image/jpeg";
+
+        AuthenticatedUser user = mock(AuthenticatedUser.class);
+        when(user.getUsername()).thenReturn(username);
 
         MultipartFile file = mock(MultipartFile.class);
         when(file.getContentType()).thenReturn(type);
@@ -150,22 +161,25 @@ public class ImageRepoServiceTest {
         // Act & Assert
         assertThrows(
                 ImageWithNameAlreadyExistsException.class,
-                () -> target.uploadImage(userId, file, timestamp));
+                () -> target.uploadImage(user, file, timestamp));
     }
 
     @Test
     public void testUploadImageInvalidType() throws IOException {
         // Arrange
-        String userId = "userId";
+        String username = "username";
         MultipartFile file = mock(MultipartFile.class);
         Date timestamp = new Date(123);
+
+        AuthenticatedUser user = mock(AuthenticatedUser.class);
+        when(user.getUsername()).thenReturn(username);
 
         when(file.getContentType()).thenReturn("text/html");
 
         // Act
         assertThrows(
                 ImageTypeNotAllowedException.class,
-                () -> target.uploadImage(userId, file, timestamp));
+                () -> target.uploadImage(user, file, timestamp));
 
         // Assert
         verify(imageRecordsRepository, never()).save(any());
@@ -175,14 +189,17 @@ public class ImageRepoServiceTest {
     @Test
     public void testDeleteImageHappyPath() throws IOException {
         // Arrange
-        String userId = "requester";
+        String username = "requester";
         String name = "picture";
 
+        AuthenticatedUser user = mock(AuthenticatedUser.class);
+        when(user.getUsername()).thenReturn(username);
+
         when(imageRecordsRepository.findByName(name))
-                .thenReturn(new ImageRecord(null, null, userId, null, null, null));
+                .thenReturn(new ImageRecord(null, null, username, null, null, null));
 
         // Act
-        target.deleteImage(name, userId);
+        target.deleteImage(name, user);
 
         // Assert
         verify(imageStorageService).delete(name);
@@ -192,9 +209,12 @@ public class ImageRepoServiceTest {
     @Test
     public void testDeleteImageNotAllowed() throws IOException {
         // Arrange
-        String userId = "requester";
+        String username = "requester";
         String ownerId = "ownderId";
         String name = "picture";
+
+        AuthenticatedUser user = mock(AuthenticatedUser.class);
+        when(user.getUsername()).thenReturn(username);
 
         when(imageRecordsRepository.findByName(name))
                 .thenReturn(new ImageRecord(null, null, ownerId, null, null, null));
@@ -202,7 +222,7 @@ public class ImageRepoServiceTest {
         // Act
         assertThrows(
                 NotAllowedToDeleteImageException.class,
-                () ->  target.deleteImage(name, userId));
+                () ->  target.deleteImage(name, user));
 
         // Assert
         verify(imageStorageService, never()).delete(any());
@@ -213,7 +233,7 @@ public class ImageRepoServiceTest {
         return new ImageRecord(
                 record.getName(),
                 record.getType(),
-                record.getUserId(),
+                record.getUsername(),
                 record.getDateUploaded(),
                 record.getUploadStatus(),
                 url);
