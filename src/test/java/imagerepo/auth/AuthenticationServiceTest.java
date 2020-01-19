@@ -1,6 +1,5 @@
 package imagerepo.auth;
 
-import imagerepo.auth.exceptions.UnauthorizedException;
 import imagerepo.auth.models.AuthenticatedUser;
 import org.junit.Before;
 import org.junit.Test;
@@ -14,7 +13,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
@@ -46,11 +44,11 @@ public class AuthenticationServiceTest {
                 .thenReturn(ResponseEntity.ok().body(user));
 
         // Act
-        AuthenticatedHttpServletRequest actual = target.authenticate(request);
+        HttpServletRequest actual = target.authenticate(request);
 
         // Assert
         assertThat(actual).isExactlyInstanceOf(AuthenticatedHttpServletRequest.class);
-        assertThat(actual.getLoggedInUser()).isEqualTo(user);
+        assertThat(((AuthenticatedHttpServletRequest) actual).getLoggedInUser()).isEqualTo(user);
     }
 
     @Test
@@ -65,12 +63,9 @@ public class AuthenticationServiceTest {
                 .thenReturn(ResponseEntity.ok().body(user));
 
         // Act
-        AuthenticatedHttpServletRequest actual = target.authenticate(request);
+        HttpServletRequest actual = target.authenticate(request);
 
         // Assert
-        assertThat(actual).isExactlyInstanceOf(AuthenticatedHttpServletRequest.class);
-        assertThrows(
-                UnauthorizedException.class,
-                actual::getLoggedInUser);
+        assertThat(actual).isExactlyInstanceOf(HttpServletRequest.class);
     }
 }

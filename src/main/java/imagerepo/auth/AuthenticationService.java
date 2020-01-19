@@ -32,8 +32,8 @@ public class AuthenticationService {
         this.authServiceAuthenticateUrl = authServiceAuthenticateUrl;
     }
 
-    public AuthenticatedHttpServletRequest authenticate(HttpServletRequest request) {
-        AuthenticatedUser user = Optional.ofNullable(getCookieValue(request, authTokenName))
+    public HttpServletRequest authenticate(HttpServletRequest request) {
+        return Optional.ofNullable(getCookieValue(request, authTokenName))
                 .map(this::buildRequestEntity)
                 .map(requestEntity -> restTemplate.exchange(
                         authServiceAuthenticateUrl,
@@ -41,8 +41,8 @@ public class AuthenticationService {
                         requestEntity,
                         AuthenticatedUser.class))
                 .map(ResponseEntity::getBody)
-                .orElse(null);
-        return new AuthenticatedHttpServletRequest(request, user);
+                .map(user -> (HttpServletRequest) new AuthenticatedHttpServletRequest(request, user))
+                .orElse(request);
     }
 
     private HttpEntity buildRequestEntity(String authTokenValue) {

@@ -1,11 +1,9 @@
 package imagerepo.auth;
 
-import imagerepo.auth.exceptions.UnauthorizedException;
 import imagerepo.auth.models.AuthenticatedUser;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
-import java.util.Optional;
 
 public class AuthenticatedHttpServletRequest extends HttpServletRequestWrapper {
 
@@ -17,7 +15,6 @@ public class AuthenticatedHttpServletRequest extends HttpServletRequestWrapper {
     }
 
     public AuthenticatedUser getLoggedInUser() {
-        return Optional.ofNullable(user)
-                .orElseThrow(UnauthorizedException::new);
+        return user;
     }
 }

@@ -6,7 +6,6 @@ import imagerepo.models.ImageRecord;
 import imagerepo.repositories.ImageRecordsRepository;
 import imagerepo.services.exceptions.ImageTypeNotAllowedException;
 import imagerepo.services.exceptions.ImageWithNameAlreadyExistsException;
-import imagerepo.services.exceptions.NotAllowedToDeleteImageException;
 import lombok.SneakyThrows;
 import org.apache.http.entity.ContentType;
 import org.slf4j.Logger;
@@ -96,15 +95,7 @@ public class ImageRepoService {
     }
 
     @Transactional
-    public void deleteImage(String filename, AuthenticatedUser user) throws IOException {
-        // todo: this logic shouldn't be here
-        boolean canDelete = user.getAuthorities().contains("ROLE_ADMIN")
-                || user.getUsername().equals(imageRecordsRepository.findByName(filename).getUsername());
-
-        if (!canDelete) {
-            throw new NotAllowedToDeleteImageException(user.getUsername(), filename);
-        }
-
+    public void deleteImage(String filename) throws IOException {
         imageStorageService.delete(filename);
         imageRecordsRepository.deleteById(filename);
     }

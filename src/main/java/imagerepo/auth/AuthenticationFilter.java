@@ -21,7 +21,7 @@ public class AuthenticationFilter implements Filter {
             ServletResponse response,
             FilterChain chain) throws IOException, ServletException {
 
-        AuthenticatedHttpServletRequest authenticated =
+        HttpServletRequest authenticated =
                 authenticationService.authenticate((HttpServletRequest) request);
         chain.doFilter(authenticated, response);
     }

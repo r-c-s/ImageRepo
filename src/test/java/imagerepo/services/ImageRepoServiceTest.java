@@ -6,7 +6,6 @@ import imagerepo.models.ImageRecord;
 import imagerepo.repositories.ImageRecordsRepository;
 import imagerepo.services.exceptions.ImageTypeNotAllowedException;
 import imagerepo.services.exceptions.ImageWithNameAlreadyExistsException;
-import imagerepo.services.exceptions.NotAllowedToDeleteImageException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -185,46 +184,16 @@ public class ImageRepoServiceTest {
     }
 
     @Test
-    public void testDeleteImageHappyPath() throws IOException {
+    public void testDeleteImage() throws IOException {
         // Arrange
-        String username = "requester";
         String name = "picture";
 
-        AuthenticatedUser user = mock(AuthenticatedUser.class);
-        when(user.getUsername()).thenReturn(username);
-
-        when(imageRecordsRepository.findByName(name))
-                .thenReturn(new ImageRecord(null, null, username, null, null, null));
-
         // Act
-        target.deleteImage(name, user);
+        target.deleteImage(name);
 
         // Assert
         verify(imageStorageService).delete(name);
         verify(imageRecordsRepository).deleteById(name);
-    }
-
-    @Test
-    public void testDeleteImageNotAllowed() throws IOException {
-        // Arrange
-        String username = "requester";
-        String ownerId = "ownderId";
-        String name = "picture";
-
-        AuthenticatedUser user = mock(AuthenticatedUser.class);
-        when(user.getUsername()).thenReturn(username);
-
-        when(imageRecordsRepository.findByName(name))
-                .thenReturn(new ImageRecord(null, null, ownerId, null, null, null));
-
-        // Act
-        assertThrows(
-                NotAllowedToDeleteImageException.class,
-                () ->  target.deleteImage(name, user));
-
-        // Assert
-        verify(imageStorageService, never()).delete(any());
-        verify(imageRecordsRepository, never()).deleteById(any());
     }
 
     private static ImageRecord withUrl(ImageRecord record, String url) {

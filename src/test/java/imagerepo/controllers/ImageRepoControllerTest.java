@@ -1,6 +1,7 @@
 package imagerepo.controllers;
 
 import com.google.common.collect.ImmutableList;
+import imagerepo.auth.AuthUtils;
 import imagerepo.auth.AuthenticatedHttpServletRequest;
 import imagerepo.auth.models.AuthenticatedUser;
 import imagerepo.models.ImageRecord;
@@ -27,12 +28,14 @@ import static org.mockito.Mockito.*;
 public class ImageRepoControllerTest {
 
     private ImageRepoService service;
+    private AuthUtils authUtils;
     private ImageRepoController target;
 
     @Before
     public void setup() {
         service = mock(ImageRepoService.class);
-        target = new ImageRepoController(service);
+        authUtils = mock(AuthUtils.class);
+        target = new ImageRepoController(service, authUtils);
     }
 
     @Test
@@ -80,7 +83,8 @@ public class ImageRepoControllerTest {
 
         AuthenticatedUser user = mock(AuthenticatedUser.class);
         AuthenticatedHttpServletRequest mockRequest = mock(AuthenticatedHttpServletRequest.class);
-        when(mockRequest.getLoggedInUser()).thenReturn(user);
+        when(authUtils.tryGetLoggedInUser(mockRequest))
+                .thenReturn(user);
 
         ImageRecord record = mock(ImageRecord.class);
         when(record.getUploadStatus()).thenReturn(recordStatus);
@@ -102,17 +106,12 @@ public class ImageRepoControllerTest {
     public void testDeleteImage() throws IOException {
         // Arrange
         String name = "filename";
-        String userId = "userId";
-
-        AuthenticatedUser user = mock(AuthenticatedUser.class);
-        AuthenticatedHttpServletRequest mockRequest = mock(AuthenticatedHttpServletRequest.class);
-        when(mockRequest.getLoggedInUser()).thenReturn(user);
 
         // Act
-        ResponseEntity<Void> actual = target.deleteImage(name, mockRequest);
+        ResponseEntity<Void> actual = target.deleteImage(name);
 
         // Assert
         assertThat(actual.getStatusCodeValue()).isEqualTo(204);
-        verify(service).deleteImage(name, user);
+        verify(service).deleteImage(name);
     }
 }

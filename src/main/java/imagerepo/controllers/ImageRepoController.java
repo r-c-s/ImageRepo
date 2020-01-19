@@ -1,7 +1,6 @@
 package imagerepo.controllers;
 
-import imagerepo.auth.AuthenticatedHttpServletRequest;
-import imagerepo.auth.exceptions.UnauthorizedException;
+import imagerepo.auth.AuthUtils;
 import imagerepo.auth.models.AuthenticatedUser;
 import imagerepo.models.ImageRecord;
 import imagerepo.services.ImageRepoService;
@@ -13,9 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.activation.MimetypesFileTypeMap;
-import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -29,9 +26,11 @@ public class ImageRepoController {
     private static final MimetypesFileTypeMap mimeTypesMap = new MimetypesFileTypeMap();
 
     private ImageRepoService imageRepoService;
+    private AuthUtils authUtils;
 
-    public ImageRepoController(ImageRepoService imageRepoService) {
+    public ImageRepoController(ImageRepoService imageRepoService, AuthUtils authUtils) {
         this.imageRepoService = imageRepoService;
+        this.authUtils = authUtils;
     }
 
     @GetMapping
@@ -55,8 +54,7 @@ public class ImageRepoController {
     public ResponseEntity<ImageRecord> uploadImage(
             @RequestParam("file") MultipartFile file,
             HttpServletRequest request) throws URISyntaxException {
-        AuthenticatedHttpServletRequest authenticatedRequest = tryGetAuthenticatedRequest(request);
-        AuthenticatedUser user = authenticatedRequest.getLoggedInUser();
+        AuthenticatedUser user = authUtils.tryGetLoggedInUser(request);
         ImageRecord record = imageRepoService.uploadImage(user, file, new Date());
         boolean created = record.getUploadStatus().equals(ImageRecord.UploadStatus.succeeded);
         return (created
@@ -67,23 +65,9 @@ public class ImageRepoController {
     }
 
     @DeleteMapping("/{name}")
-    public ResponseEntity<Void> deleteImage(
-            @PathVariable String name,
-            HttpServletRequest request) throws IOException {
-        AuthenticatedHttpServletRequest authenticatedRequest = tryGetAuthenticatedRequest(request);
-        AuthenticatedUser user = authenticatedRequest.getLoggedInUser();
-        imageRepoService.deleteImage(name, user);
+    public ResponseEntity<Void> deleteImage(@PathVariable String name) throws IOException {
+        imageRepoService.deleteImage(name);
         return ResponseEntity.status(HttpStatus.NO_CONTENT)
                 .build();
-    }
-
-    private AuthenticatedHttpServletRequest tryGetAuthenticatedRequest(ServletRequest request) {
-        if (request instanceof AuthenticatedHttpServletRequest) {
-            return (AuthenticatedHttpServletRequest) request;
-        }
-        if (request instanceof HttpServletRequestWrapper) {
-            return tryGetAuthenticatedRequest(((HttpServletRequestWrapper) request).getRequest());
-        }
-        throw new UnauthorizedException();
     }
 }
