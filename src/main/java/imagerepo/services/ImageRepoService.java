@@ -39,18 +39,15 @@ public class ImageRepoService {
 
     private ImageRecordsRepository imageRecordsRepository;
     private ImageStorageService imageStorageService;
-    private String host;
-    private int port;
+    private String baseUrl;
 
     public ImageRepoService(
             ImageRecordsRepository imageRecordsRepository,
             ImageStorageService imageStorageService,
-            @Value("${server.host}") String host,
-            @Value("${server.port}") int port) {
+            @Value("${service.baseUrl}") String baseUrl) {
         this.imageRecordsRepository = imageRecordsRepository;
         this.imageStorageService = imageStorageService;
-        this.host = host;
-        this.port = port;
+        this.baseUrl = baseUrl;
     }
 
     public List<ImageRecord> getImages() {
@@ -126,6 +123,6 @@ public class ImageRepoService {
 
     @SneakyThrows
     private String buildUrl(String name) {
-        return "http://" + host + ":" + port + "/imagerepo/api/images/" + URLEncoder.encode(name, "UTF-8");
+        return baseUrl + "/imagerepo/api/images/" + URLEncoder.encode(name, "UTF-8");
     }
 }

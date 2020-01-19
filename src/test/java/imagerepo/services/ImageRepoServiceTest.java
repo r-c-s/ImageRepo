@@ -28,17 +28,15 @@ public class ImageRepoServiceTest {
 
     private ImageRecordsRepository imageRecordsRepository;
     private ImageStorageService imageStorageService;
-    private String host;
-    private int port;
+    private String baseUrl;
     private ImageRepoService target;
 
     @Before
     public void setup() {
         imageRecordsRepository = mock(ImageRecordsRepository.class);
         imageStorageService = mock(ImageStorageService.class);
-        host = "localhost";
-        port = 1234;
-        target = new ImageRepoService(imageRecordsRepository, imageStorageService, host, port);
+        baseUrl = "https//imagerepo.com";
+        target = new ImageRepoService(imageRecordsRepository, imageStorageService, baseUrl);
     }
 
     @Test
@@ -56,7 +54,7 @@ public class ImageRepoServiceTest {
 
         // Assert
         List<ImageRecord> expected = ImmutableList.of(
-                new ImageRecord("image1.jpg", "image/jpeg", "username", new Date(1), ImageRecord.UploadStatus.succeeded, "http://localhost:" + port + "/imagerepo/api/images/image1.jpg"),
+                new ImageRecord("image1.jpg", "image/jpeg", "username", new Date(1), ImageRecord.UploadStatus.succeeded, baseUrl + "/imagerepo/api/images/image1.jpg"),
                 new ImageRecord("image2.jpg", "image/jpeg", "username", new Date(2), ImageRecord.UploadStatus.pending, null),
                 new ImageRecord("image2.jpg", "image/jpeg", "username", new Date(2), ImageRecord.UploadStatus.failed, null));
 
@@ -100,7 +98,7 @@ public class ImageRepoServiceTest {
         ImageRecord actual = target.uploadImage(user, file, timestamp);
 
         // Assert
-        ImageRecord expected = withUrl(repositoryResponse, "http://localhost:" + port + "/imagerepo/api/images/" + filename);
+        ImageRecord expected = withUrl(repositoryResponse, baseUrl + "/imagerepo/api/images/" + filename);
         assertThat(actual).usingRecursiveComparison().isEqualTo(expected);
 
         InOrder inOrder = inOrder(imageRecordsRepository, imageStorageService);

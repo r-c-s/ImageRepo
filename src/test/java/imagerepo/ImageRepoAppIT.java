@@ -44,11 +44,8 @@ public class ImageRepoAppIT {
     @Value("${admin.username}") private String adminUsername;
     @Value("${admin.password}") private String adminPassword;
 
-    @Value("${server.host}")
-    private String host;
-
-    @Value("${server.port}")
-    private String port;
+    @Value("${service.baseUrl}")
+    private String baseUrl;
 
     @Value("${services.auth.login}")
     private String authServiceLoginUrl;
@@ -210,7 +207,7 @@ public class ImageRepoAppIT {
 
     @SneakyThrows
     private String createUrl(String uri) {
-        return "http://" + host + ":" + port + uri;
+        return baseUrl + uri;
     }
 
     @SneakyThrows
