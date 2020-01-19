@@ -1,5 +1,6 @@
 package imagerepo.config;
 
+import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
@@ -44,9 +45,11 @@ public class StorageConfig {
     }
 
     public AmazonS3 s3client(AwsConfig config) {
+        AWSCredentialsProvider credentials = new AWSStaticCredentialsProvider(
+                new BasicAWSCredentials(config.getAccessKey(), config.getSecretKey()));
         return AmazonS3ClientBuilder.standard()
                 .withRegion(Regions.fromName(config.getRegion()))
-                .withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(config.getAccessKey(), config.getSecretKey())))
+                .withCredentials(credentials)
                 .build();
     }
 }
