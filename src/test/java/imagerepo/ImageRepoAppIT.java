@@ -50,7 +50,7 @@ public class ImageRepoAppIT {
     @Value("${services.auth.login}")
     private String authServiceLoginUrl;
 
-    private static final TestRestTemplate restTemplate = new TestRestTemplate();
+    private final TestRestTemplate restTemplate = new TestRestTemplate();
 
     @Before
     @After
