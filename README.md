@@ -1,6 +1,6 @@
 A simple application for uploading images
 
-Depends on Auth microservice, repo for that project is coming soon!
+Depends on Auth microservice: https://github.com/r-c-s/Auth
 
 <br>
 
