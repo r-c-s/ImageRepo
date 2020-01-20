@@ -84,7 +84,7 @@ public class ImageRepoControllerTest {
         AuthenticatedUser user = mock(AuthenticatedUser.class);
         AuthenticatedHttpServletRequest mockRequest = mock(AuthenticatedHttpServletRequest.class);
         when(authUtils.tryGetLoggedInUser(mockRequest))
-                .thenReturn(user);
+                .thenReturn(Optional.of(user));
 
         ImageRecord record = mock(ImageRecord.class);
         when(record.getUploadStatus()).thenReturn(recordStatus);

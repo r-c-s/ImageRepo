@@ -1,6 +1,5 @@
 package imagerepo.auth;
 
-import imagerepo.auth.exceptions.UnauthorizedException;
 import imagerepo.auth.models.AuthenticatedUser;
 import imagerepo.models.ImageRecord;
 import imagerepo.repositories.ImageRecordsRepository;
@@ -11,6 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import javax.servlet.ServletRequest;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -33,6 +33,9 @@ public class EndpointSecurityTest {
         // Arrange
         ServletRequest request = mock(ServletRequest.class);
 
+        when(authUtils.tryGetLoggedInUser(request))
+                .thenReturn(Optional.of(mock(AuthenticatedUser.class)));
+
         // Act
         boolean actual = target.isLoggedIn(request);
 
@@ -46,7 +49,7 @@ public class EndpointSecurityTest {
         ServletRequest request = mock(ServletRequest.class);
 
         when(authUtils.tryGetLoggedInUser(request))
-                .thenThrow(new UnauthorizedException());
+                .thenReturn(Optional.empty());
 
         // Act
         boolean actual = target.isLoggedIn(request);
@@ -64,7 +67,7 @@ public class EndpointSecurityTest {
         AuthenticatedUser user = mock(AuthenticatedUser.class);
 
         when(authUtils.tryGetLoggedInUser(request))
-                .thenReturn(user);
+                .thenReturn(Optional.of(user));
 
         when(authUtils.isAdmin(user))
                 .thenReturn(true);
@@ -85,7 +88,7 @@ public class EndpointSecurityTest {
         AuthenticatedUser user = new AuthenticatedUser("username", null);
 
         when(authUtils.tryGetLoggedInUser(request))
-                .thenReturn(user);
+                .thenReturn(Optional.of(user));
 
         when(authUtils.isAdmin(user))
                 .thenReturn(false);
@@ -107,7 +110,7 @@ public class EndpointSecurityTest {
         String imagename = "name";
 
         when(authUtils.tryGetLoggedInUser(request))
-                .thenThrow(new UnauthorizedException());
+                .thenReturn(Optional.empty());
 
         // Act
         boolean actual = target.canDeleteImage(request, imagename);

@@ -1,23 +1,23 @@
 package imagerepo.auth;
 
-import imagerepo.auth.exceptions.UnauthorizedException;
 import imagerepo.auth.models.AuthenticatedUser;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
+import java.util.Optional;
 
 @Service
 public class AuthUtils {
 
-    public AuthenticatedUser tryGetLoggedInUser(ServletRequest request) {
+    public Optional<AuthenticatedUser> tryGetLoggedInUser(ServletRequest request) {
         if (request instanceof AuthenticatedHttpServletRequest) {
-            return ((AuthenticatedHttpServletRequest) request).getLoggedInUser();
+            return Optional.of(((AuthenticatedHttpServletRequest) request).getLoggedInUser());
         }
         if (request instanceof HttpServletRequestWrapper) {
             return tryGetLoggedInUser(((HttpServletRequestWrapper) request).getRequest());
         }
-        throw new UnauthorizedException();
+        return Optional.empty();
     }
 
     public boolean isAdmin(AuthenticatedUser user) {

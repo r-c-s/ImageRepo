@@ -1,7 +1,5 @@
 package imagerepo.auth;
 
-import imagerepo.auth.exceptions.UnauthorizedException;
-import imagerepo.auth.models.AuthenticatedUser;
 import imagerepo.repositories.ImageRecordsRepository;
 import org.springframework.stereotype.Component;
 
@@ -19,21 +17,13 @@ public class EndpointSecurity {
     }
 
     public boolean isLoggedIn(ServletRequest request) {
-        try {
-            authUtils.tryGetLoggedInUser(request);
-            return true;
-        } catch (UnauthorizedException e) {
-            return false;
-        }
+        return authUtils.tryGetLoggedInUser(request).isPresent();
     }
 
     public boolean canDeleteImage(ServletRequest request, String imagename) {
-        try {
-            AuthenticatedUser user = authUtils.tryGetLoggedInUser(request);
-            return authUtils.isAdmin(user) || isOwnerOfImage(user.getUsername(), imagename);
-        } catch (UnauthorizedException e) {
-            return false;
-        }
+        return authUtils.tryGetLoggedInUser(request)
+                .map(user -> authUtils.isAdmin(user) || isOwnerOfImage(user.getUsername(), imagename))
+                .orElse(false);
     }
 
     private boolean isOwnerOfImage(String username, String imagename) {

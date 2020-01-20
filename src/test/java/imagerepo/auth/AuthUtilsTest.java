@@ -1,7 +1,6 @@
 package imagerepo.auth;
 
 import com.google.common.collect.ImmutableList;
-import imagerepo.auth.exceptions.UnauthorizedException;
 import imagerepo.auth.models.AuthenticatedUser;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
@@ -11,9 +10,9 @@ import org.junit.runner.RunWith;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -37,10 +36,10 @@ public class AuthUtilsTest {
                 .thenReturn(loggedInUser);
 
         // Act
-        AuthenticatedUser actual = target.tryGetLoggedInUser(authenticatedRequest);
+        Optional<AuthenticatedUser> actual = target.tryGetLoggedInUser(authenticatedRequest);
 
         // Assert
-        assertThat(actual).isSameAs(loggedInUser);
+        assertThat(actual.get()).isSameAs(loggedInUser);
     }
 
     @Test
@@ -57,10 +56,10 @@ public class AuthUtilsTest {
                 .thenReturn(loggedInUser);
 
         // Act
-        AuthenticatedUser actual = target.tryGetLoggedInUser(request);
+        Optional<AuthenticatedUser> actual = target.tryGetLoggedInUser(request);
 
         // Assert
-        assertThat(actual).isSameAs(loggedInUser);
+        assertThat(actual.get()).isSameAs(loggedInUser);
     }
 
     @Test
@@ -73,10 +72,11 @@ public class AuthUtilsTest {
         when(request.getRequest())
                 .thenReturn(delegateRequest);
 
-        // Act & assert
-        assertThrows(
-                UnauthorizedException.class,
-                () -> target.tryGetLoggedInUser(request));
+        // Act
+        Optional<AuthenticatedUser> actual = target.tryGetLoggedInUser(request);
+
+        // Assert
+        assertThat(actual).isEmpty();
     }
 
     @Test
@@ -85,9 +85,10 @@ public class AuthUtilsTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
 
         // Act & assert
-        assertThrows(
-                UnauthorizedException.class,
-                () -> target.tryGetLoggedInUser(request));
+        Optional<AuthenticatedUser> actual = target.tryGetLoggedInUser(request);
+
+        // Assert
+        assertThat(actual).isEmpty();
     }
 
     @Test
