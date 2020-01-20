@@ -9,10 +9,10 @@ import java.io.IOException;
 @Component
 public class AuthenticationFilter implements Filter {
 
-    private final AuthenticationService authenticationService;
+    private final RequestAuthenticationService requestAuthenticationService;
 
-    public AuthenticationFilter(AuthenticationService authenticationService) {
-        this.authenticationService = authenticationService;
+    public AuthenticationFilter(RequestAuthenticationService requestAuthenticationService) {
+        this.requestAuthenticationService = requestAuthenticationService;
     }
 
     @Override
@@ -22,7 +22,7 @@ public class AuthenticationFilter implements Filter {
             FilterChain chain) throws IOException, ServletException {
 
         HttpServletRequest authenticated =
-                authenticationService.authenticate((HttpServletRequest) request);
+                requestAuthenticationService.authenticate((HttpServletRequest) request);
         chain.doFilter(authenticated, response);
     }
 }

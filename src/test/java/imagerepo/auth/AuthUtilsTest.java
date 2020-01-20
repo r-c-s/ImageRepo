@@ -92,14 +92,14 @@ public class AuthUtilsTest {
 
     @Test
     @Parameters({
-            "ROLE_ADMIN | true",
-            "ROLE_USER | false"
+            "ADMIN | true",
+            "USER | false"
     })
     public void testIsAdmin(String role, boolean expected) {
         // Arrange
         AuthenticatedUser user = new AuthenticatedUser(
                 "username",
-                ImmutableList.of(role, "ROLE_OTHER"));
+                ImmutableList.of(role, "OTHER"));
 
         // Act
         boolean actual = target.isAdmin(user);

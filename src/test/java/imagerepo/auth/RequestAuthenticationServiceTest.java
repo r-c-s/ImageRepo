@@ -1,46 +1,40 @@
 package imagerepo.auth;
 
+import imagerepo.apis.AuthService;
 import imagerepo.auth.models.AuthenticatedUser;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.http.HttpMethod;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-public class AuthenticationServiceTest {
+@RunWith(MockitoJUnitRunner.class)
+public class RequestAuthenticationServiceTest {
 
-    private RestTemplate restTemplate;
-    private String authServiceUrl;
-    private AuthenticationService target;
+    @Mock
+    private AuthService authService;
 
-    @Before
-    public void setup() {
-        restTemplate = mock(RestTemplate.class);
-        authServiceUrl = "auth-service-url";
-        target = new AuthenticationService(restTemplate, authServiceUrl);
-    }
+    @InjectMocks
+    private RequestAuthenticationService target;
 
     @Test
     public void testAuthenticate() {
         // Arrange
+        String authToken = "123456789";
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getCookies())
-                .thenReturn(new Cookie[]{ new Cookie("JSESSIONID", "123456789")});
+                .thenReturn(new Cookie[]{ new Cookie("JSESSIONID", authToken)});
 
         AuthenticatedUser user = mock(AuthenticatedUser.class);
-        when(restTemplate.exchange(eq(authServiceUrl), eq(HttpMethod.GET), any(), eq(AuthenticatedUser.class)))
+        when(authService.authenticate(authToken))
                 .thenReturn(ResponseEntity.ok().body(user));
 
         // Act
@@ -57,10 +51,6 @@ public class AuthenticationServiceTest {
         HttpServletRequest request = mock(HttpServletRequest.class);
         when(request.getCookies())
                 .thenReturn(null);
-
-        AuthenticatedUser user = mock(AuthenticatedUser.class);
-        when(restTemplate.exchange(eq(authServiceUrl), eq(HttpMethod.GET), any(), eq(AuthenticatedUser.class)))
-                .thenReturn(ResponseEntity.ok().body(user));
 
         // Act
         HttpServletRequest actual = target.authenticate(request);

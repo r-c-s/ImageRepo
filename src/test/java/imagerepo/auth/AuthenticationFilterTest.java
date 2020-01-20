@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
 public class AuthenticationFilterTest {
 
     @Mock
-    private AuthenticationService authenticationService;
+    private RequestAuthenticationService requestAuthenticationService;
 
     @InjectMocks
     private AuthenticationFilter target;
@@ -31,7 +31,7 @@ public class AuthenticationFilterTest {
         HttpServletResponse response = mock(HttpServletResponse.class);
         FilterChain chain = mock(FilterChain.class);
 
-        when(authenticationService.authenticate(request))
+        when(requestAuthenticationService.authenticate(request))
                 .thenReturn(authenticatedRequest);
 
         // Act
