@@ -1,4 +1,4 @@
-package imagerepo.apis;
+package imagerepo.controllers;
 
 import com.google.common.collect.ImmutableList;
 import imagerepo.auth.AuthUtils;
@@ -25,17 +25,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @RunWith(JUnitParamsRunner.class)
-public class ImageRepoApiTest {
+public class ImageRepoControllerTest {
 
     private ImageRepoService service;
     private AuthUtils authUtils;
-    private ImageRepoApi target;
+    private ImageRepoController target;
 
     @Before
     public void setup() {
         service = mock(ImageRepoService.class);
         authUtils = mock(AuthUtils.class);
-        target = new ImageRepoApi(service, authUtils);
+        target = new ImageRepoController(service, authUtils);
     }
 
     @Test

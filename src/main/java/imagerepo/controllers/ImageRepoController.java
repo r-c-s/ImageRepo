@@ -1,4 +1,4 @@
-package imagerepo.apis;
+package imagerepo.controllers;
 
 import imagerepo.auth.AuthUtils;
 import imagerepo.auth.models.AuthenticatedUser;
@@ -21,14 +21,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/images")
-public class ImageRepoApi {
+public class ImageRepoController {
 
     private static final MimetypesFileTypeMap mimeTypesMap = new MimetypesFileTypeMap();
 
     private ImageRepoService imageRepoService;
     private AuthUtils authUtils;
 
-    public ImageRepoApi(ImageRepoService imageRepoService, AuthUtils authUtils) {
+    public ImageRepoController(ImageRepoService imageRepoService, AuthUtils authUtils) {
         this.imageRepoService = imageRepoService;
         this.authUtils = authUtils;
     }
