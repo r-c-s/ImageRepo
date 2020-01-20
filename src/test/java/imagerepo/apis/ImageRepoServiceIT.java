@@ -55,8 +55,8 @@ public class ImageRepoServiceIT {
         target = new ImageRepoService(imageRepoServiceBaseUrl, authService, template);
 
         // register test users
-        assertThat(authService.register(userA).getStatusCodeValue()).isEqualTo(200);
-        assertThat(authService.register(userB).getStatusCodeValue()).isEqualTo(200);
+        Stream.of(userA, userB).forEach(user ->
+                assertThat(authService.register(user).getStatusCodeValue()).isEqualTo(200));
     }
 
     @Rule
