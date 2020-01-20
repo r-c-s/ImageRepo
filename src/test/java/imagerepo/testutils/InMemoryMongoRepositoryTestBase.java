@@ -9,10 +9,7 @@ import org.junit.Before;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 
-/**
- * Uses an in-memory Mongo implementation for unit tests
- */
-public class MongoRepositoryTestBase {
+public class InMemoryMongoRepositoryTestBase {
 
     private MongoServer server;
     private MongoClient client;

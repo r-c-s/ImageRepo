@@ -1,7 +1,7 @@
 package imagerepo.repositories;
 
 import imagerepo.models.ImageRecord;
-import imagerepo.testutils.MongoRepositoryTestBase;
+import imagerepo.testutils.InMemoryMongoRepositoryTestBase;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import org.junit.Before;
@@ -14,7 +14,7 @@ import java.util.Date;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(JUnitParamsRunner.class)
-public class ImageRecordsRepositoryImplTest extends MongoRepositoryTestBase {
+public class ImageRecordsRepositoryImplTestInMemory extends InMemoryMongoRepositoryTestBase {
 
     private MongoTemplate mongoTemplate;
     private ImageRecordsRepositoryImpl target;
