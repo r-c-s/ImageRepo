@@ -36,11 +36,12 @@ public class ImageRepoServiceIT {
     private static LoginCredentials userA = new LoginCredentials(RandomString.make(), RandomString.make());
     private static LoginCredentials userB = new LoginCredentials(RandomString.make(), RandomString.make());
 
-    @Value("${service.baseUrl}")
-    private String imageRepoServiceBaseUrl;
+    @Value("${server.port}")
+    private int port;
 
     @Value("${services.auth.baseUrl}")
     private String authServiceBaseUrl;
+    private String imageRepoServiceBaseUrl;
 
     private AuthService authService;
     private ImageRepoService target;
@@ -48,6 +49,7 @@ public class ImageRepoServiceIT {
     @Before
     public void setup() {
         RestTemplate template = new TestRestTemplate().getRestTemplate();
+        imageRepoServiceBaseUrl = "http://localhost:" + port;
         authService = new AuthService(authServiceBaseUrl, template);
         target = new ImageRepoService(imageRepoServiceBaseUrl, authService, template);
 
