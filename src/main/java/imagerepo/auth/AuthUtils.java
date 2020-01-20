@@ -21,7 +21,7 @@ public class AuthUtils {
     }
 
     public boolean isAdmin(AuthenticatedUser user) {
-        return user.getAuthorities().stream()
+        return user.getRoles().stream()
                 .anyMatch(role -> role.equals("ADMIN"));
     }
 }

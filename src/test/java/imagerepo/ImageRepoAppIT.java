@@ -4,9 +4,12 @@ import com.google.common.collect.ImmutableList;
 import imagerepo.auth.AuthenticationService;
 import imagerepo.models.ImageRecord;
 import lombok.SneakyThrows;
-import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TestRule;
+import org.junit.rules.TestWatcher;
+import org.junit.runner.Description;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,6 +29,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -52,10 +56,19 @@ public class ImageRepoAppIT {
 
     private final TestRestTemplate restTemplate = new TestRestTemplate();
 
+    @Rule
+    public TestRule watchman = new TestWatcher() {
+        @Override
+        protected void failed(Throwable t, Description description) {
+            cleanup();
+        }
+    };
+
     @Before
-    @After
     public void cleanup() {
-        deleteAllImages();
+        getImagesRequest().getBody().stream()
+                .map(ImageRecord::getName)
+                .forEach(name -> deleteImageRequest(adminUsername, adminPassword, name));
     }
 
     @Test
@@ -218,12 +231,6 @@ public class ImageRepoAppIT {
         return new FileSystemResource(file);
     }
 
-    private void deleteAllImages() {
-        getImagesRequest().getBody().stream()
-                .map(ImageRecord::getName)
-                .forEach(name -> deleteImageRequest(adminUsername, adminPassword, name));
-    }
-
     public String login(String username, String password) {
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.set("username", username);
@@ -237,9 +244,10 @@ public class ImageRepoAppIT {
                 entity,
                 Void.class);
 
-        return getCookieValue(
-                AuthenticationService.authTokenName,
-                response.getHeaders().get("Set-Cookie").get(0));
+        return Optional.ofNullable(response.getHeaders().get("Set-Cookie"))
+                .map(cookies -> cookies.get(0))
+                .map(setCookieHeader -> getCookieValue(AuthenticationService.authTokenName, setCookieHeader))
+                .orElse(null);
     }
 
     private String getCookieValue(String cookieName, String setCookieHeader) {

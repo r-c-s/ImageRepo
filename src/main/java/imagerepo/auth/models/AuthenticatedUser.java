@@ -12,5 +12,5 @@ import java.util.List;
 public class AuthenticatedUser {
 
     private String username;
-    private List<String> authorities;
+    private List<String> roles;
 }
