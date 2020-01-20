@@ -1,8 +1,9 @@
+## Image Repo
+
 A simple application for uploading images
 
-Depends on Auth microservice: https://github.com/r-c-s/Auth
-
-<br>
+#### Dependencies
+Auth microservice: https://github.com/r-c-s/Auth
 
 ##### Build
 
@@ -30,11 +31,7 @@ java -jar "ImageRepo-1.0-SNAPSHOT.jar" --app.properties=APP_PROPERTIES_FILE
 
 TODO: steps to build trust store required for S3
 
-<br>
-
-#### APP PROPERTIES
-
-##### Base required properties
+##### Base app properties
 
 <pre>
 spring.data.mongodb.uri=MONGODB_URI
@@ -58,12 +55,4 @@ amazon.aws.s3.bucket=BUCKET
 
 <pre>
 local.storage.dir=LOCAL_STORAGE_DIR
-</pre>
-
-##### Additional test properties
-
-<pre>
-services.auth.login=AUTH_SERVICE_LOGIN_URL
-services.auth.register=AUTH_SERVICE_REGISTER_URL
-services.auth.deleteUser=AUTH_SERVICE_DELETE_USER_URL
 </pre>
