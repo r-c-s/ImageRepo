@@ -23,6 +23,7 @@ import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -64,8 +65,11 @@ public class ImageRepoServiceIT {
         @Override
         protected void finished(Description ignored) {
             // delete test users
-            assertThat(authService.delete(admin, userA.getUsername()).getStatusCodeValue()).isEqualTo(200);
-            assertThat(authService.delete(admin, userB.getUsername()).getStatusCodeValue()).isEqualTo(200);
+            Stream.of(userA, userB).forEach(user ->
+                    assertThat(authService.delete(admin, user.getUsername()).getStatusCodeValue())
+                            .satisfiesAnyOf(
+                                    status -> assertThat(status).isEqualTo(200),
+                                    status -> assertThat(status).isEqualTo(404)));
             // delete all images
             target.getImagesRequest().getBody().stream()
                     .map(ImageRecord::getName)
