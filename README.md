@@ -64,12 +64,6 @@ local.storage.dir=LOCAL_STORAGE_DIR
 
 <pre>
 services.auth.login=AUTH_SERVICE_LOGIN_URL
-userA.username=USER_A_USERNAME
-userA.password=USER_A_PASSWORD
-userB.username=USER_B_USERNAME
-userB.password=USER_B_PASSWORD
-admin.username=ADMIN_USERNAME
-admin.password=ADMIN_PASSWORD
+services.auth.register=AUTH_SERVICE_REGISTER_URL
+services.auth.deleteUser=AUTH_SERVICE_DELETE_USER_URL
 </pre>
-
-These users must have been created in Auth service and obviously the service needs to be running in the url provided
