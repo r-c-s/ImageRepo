@@ -12,7 +12,6 @@ import imagerepo.services.S3ImageStorageService;
 import imagerepo.services.utils.FileFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
@@ -25,19 +24,15 @@ import java.util.Optional;
 public class StorageConfig {
 
     @Autowired
-    private ApplicationContext context;
+    private AwsConfig awsConfig;
 
     @Value("${local.storage.dir:#{null}}")
     private Optional<String> storageDir;
 
     @Bean
     public ImageStorageService imageStorageService() {
-        return storageDir
-                .map(dir -> (ImageStorageService) new LocalStorageService(dir, fileFactory()))
-                .orElseGet(() -> {
-                    AwsConfig awsConfig = context.getBean(AwsConfig.class);
-                    return new S3ImageStorageService(s3client(awsConfig), awsConfig.getBucket());
-                });
+        return storageDir.map(dir -> (ImageStorageService) new LocalStorageService(dir, fileFactory()))
+                .orElseGet(() -> new S3ImageStorageService(s3client(awsConfig), awsConfig.getBucket()));
     }
 
     public FileFactory fileFactory() {
