@@ -3,7 +3,9 @@
 A simple application for uploading images
 
 #### Dependencies
-Auth microservice: https://github.com/r-c-s/Auth
+* [Auth microservice](https://github.com/r-c-s/Auth)
+* [MongoDB](https://docs.mongodb.com/manual/installation/)
+* TODO: steps to build trust store required for S3
 
 ##### Build
 
@@ -28,8 +30,6 @@ mvn clean test-compile failsafe:integration-test -Dapp.properties=APP_PROPERTIES
 <pre>
 java -jar "ImageRepo-1.0-SNAPSHOT.jar" --app.properties=APP_PROPERTIES_FILE 
 </pre>
-
-TODO: steps to build trust store required for S3
 
 ##### Base app properties
 
