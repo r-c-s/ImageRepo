@@ -20,10 +20,10 @@ mvn test
 </pre>
 
 ##### Run integration tests
-
 <pre>
 mvn clean test-compile failsafe:integration-test -Dapp.properties=APP_PROPERTIES_FILE
 </pre>
+AuthService must be running.
 
 ##### Run application
 
