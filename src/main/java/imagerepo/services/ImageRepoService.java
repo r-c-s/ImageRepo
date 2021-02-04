@@ -1,6 +1,5 @@
 package imagerepo.services;
 
-import imagerepo.auth.models.AuthenticatedUser;
 import imagerepo.models.ImageRecord;
 import imagerepo.repositories.ImageRecordsRepository;
 import imagerepo.services.exceptions.ImageTypeNotAllowedException;
@@ -15,6 +14,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import rcs.auth.api.models.AuthenticatedUser;
 
 import java.io.IOException;
 import java.net.URLEncoder;

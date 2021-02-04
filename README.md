@@ -3,7 +3,7 @@
 A simple application for uploading images
 
 #### Dependencies
-* [Auth microservice](https://github.com/r-c-s/Auth)
+* [AuthApi](https://github.com/r-c-s/AuthApi)
 * [MongoDB](https://docs.mongodb.com/manual/installation/)
 * TODO: steps to build trust store required for S3
 

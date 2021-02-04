@@ -1,13 +1,13 @@
 package imagerepo.auth;
 
-import imagerepo.apis.AuthService;
-import imagerepo.auth.models.AuthenticatedUser;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.ResponseEntity;
+import rcs.auth.api.AuthService;
+import rcs.auth.api.models.AuthenticatedUser;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;

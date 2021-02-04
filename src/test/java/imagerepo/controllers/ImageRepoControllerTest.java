@@ -2,7 +2,6 @@ package imagerepo.controllers;
 
 import imagerepo.auth.AuthUtils;
 import imagerepo.auth.AuthenticatedHttpServletRequest;
-import imagerepo.auth.models.AuthenticatedUser;
 import imagerepo.models.ImageRecord;
 import imagerepo.services.ImageRepoService;
 import junitparams.JUnitParamsRunner;
@@ -14,6 +13,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
+import rcs.auth.api.models.AuthenticatedUser;
 
 import java.io.IOException;
 import java.net.URISyntaxException;

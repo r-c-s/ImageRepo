@@ -1,6 +1,5 @@
-package imagerepo.apis;
+package imagerepo.api;
 
-import imagerepo.auth.models.LoginCredentials;
 import imagerepo.models.ImageRecord;
 import net.bytebuddy.utility.RandomString;
 import org.junit.Before;
@@ -19,6 +18,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
+import rcs.auth.api.AuthService;
+import rcs.auth.api.models.LoginCredentials;
 
 import java.io.IOException;
 import java.util.Date;

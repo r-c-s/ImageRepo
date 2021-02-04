@@ -1,16 +1,17 @@
 package imagerepo.auth;
 
-import imagerepo.auth.models.AuthenticatedUser;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import rcs.auth.api.models.AuthenticatedUser;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
@@ -100,7 +101,7 @@ public class AuthUtilsTest {
         // Arrange
         AuthenticatedUser user = new AuthenticatedUser(
                 "username",
-                List.of(role, "OTHER"));
+                Set.of(role, "OTHER"));
 
         // Act
         boolean actual = target.isAdmin(user);

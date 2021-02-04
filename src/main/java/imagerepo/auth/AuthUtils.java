@@ -1,7 +1,7 @@
 package imagerepo.auth;
 
-import imagerepo.auth.models.AuthenticatedUser;
 import org.springframework.stereotype.Service;
+import rcs.auth.api.models.AuthenticatedUser;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;

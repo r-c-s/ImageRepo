@@ -1,9 +1,9 @@
 package imagerepo.auth;
 
-import imagerepo.apis.AuthService;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import rcs.auth.api.AuthService;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;

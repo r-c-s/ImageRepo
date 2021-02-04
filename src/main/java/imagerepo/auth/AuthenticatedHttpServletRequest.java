@@ -1,6 +1,6 @@
 package imagerepo.auth;
 
-import imagerepo.auth.models.AuthenticatedUser;
+import rcs.auth.api.models.AuthenticatedUser;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
