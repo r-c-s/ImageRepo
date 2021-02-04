@@ -1,6 +1,5 @@
 package imagerepo.apis;
 
-import com.google.common.collect.ImmutableList;
 import imagerepo.auth.models.LoginCredentials;
 import imagerepo.models.ImageRecord;
 import lombok.SneakyThrows;
@@ -43,7 +42,7 @@ public class ImageRepoService {
 
     public ResponseEntity<ImageRecord> uploadImageRequest(LoginCredentials creds, String filename) {
         LinkedMultiValueMap<String, Resource> payload = new LinkedMultiValueMap<>();
-        payload.put("file", ImmutableList.of(getResourceFile(filename)));
+        payload.put("file", List.of(getResourceFile(filename)));
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);

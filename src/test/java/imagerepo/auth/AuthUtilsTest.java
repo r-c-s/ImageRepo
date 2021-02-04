@@ -1,6 +1,5 @@
 package imagerepo.auth;
 
-import com.google.common.collect.ImmutableList;
 import imagerepo.auth.models.AuthenticatedUser;
 import junitparams.JUnitParamsRunner;
 import junitparams.Parameters;
@@ -10,6 +9,7 @@ import org.junit.runner.RunWith;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -100,7 +100,7 @@ public class AuthUtilsTest {
         // Arrange
         AuthenticatedUser user = new AuthenticatedUser(
                 "username",
-                ImmutableList.of(role, "OTHER"));
+                List.of(role, "OTHER"));
 
         // Act
         boolean actual = target.isAdmin(user);

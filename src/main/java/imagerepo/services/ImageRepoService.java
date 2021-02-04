@@ -1,6 +1,5 @@
 package imagerepo.services;
 
-import com.google.common.collect.ImmutableSet;
 import imagerepo.auth.models.AuthenticatedUser;
 import imagerepo.models.ImageRecord;
 import imagerepo.repositories.ImageRecordsRepository;
@@ -30,7 +29,7 @@ public class ImageRepoService {
 
     private static final Logger logger = LoggerFactory.getLogger(ImageRepoService.class);
 
-    private static final Set<String> allowedContentTypes = ImmutableSet.of(
+    private static final Set<String> allowedContentTypes = Set.of(
             ContentType.IMAGE_PNG, ContentType.IMAGE_BMP, ContentType.IMAGE_GIF, ContentType.IMAGE_JPEG)
             .stream()
             .map(Object::toString)

@@ -1,6 +1,5 @@
 package imagerepo.services;
 
-import com.google.common.collect.ImmutableList;
 import imagerepo.auth.models.AuthenticatedUser;
 import imagerepo.models.ImageRecord;
 import imagerepo.repositories.ImageRecordsRepository;
@@ -41,7 +40,7 @@ public class ImageRepoServiceTest {
     @Test
     public void testGetImages() {
         // Arrange
-        List<ImageRecord> repositoryResponse = ImmutableList.of(
+        List<ImageRecord> repositoryResponse = List.of(
                 new ImageRecord("image1.jpg", "image/jpeg", "username", new Date(1), ImageRecord.UploadStatus.succeeded, null),
                 new ImageRecord("image2.jpg", "image/jpeg", "username", new Date(2), ImageRecord.UploadStatus.pending, null),
                 new ImageRecord("image2.jpg", "image/jpeg", "username", new Date(2), ImageRecord.UploadStatus.failed, null));
@@ -52,7 +51,7 @@ public class ImageRepoServiceTest {
         List<ImageRecord> actual = target.getImages();
 
         // Assert
-        List<ImageRecord> expected = ImmutableList.of(
+        List<ImageRecord> expected = List.of(
                 new ImageRecord("image1.jpg", "image/jpeg", "username", new Date(1), ImageRecord.UploadStatus.succeeded, baseUrl + "/imagerepo/api/images/image1.jpg"),
                 new ImageRecord("image2.jpg", "image/jpeg", "username", new Date(2), ImageRecord.UploadStatus.pending, null),
                 new ImageRecord("image2.jpg", "image/jpeg", "username", new Date(2), ImageRecord.UploadStatus.failed, null));

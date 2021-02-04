@@ -1,6 +1,5 @@
 package imagerepo.repositories;
 
-import com.google.common.collect.ImmutableSet;
 import imagerepo.models.ImageRecord;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.FindAndModifyOptions;
@@ -9,6 +8,8 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Repository;
+
+import java.util.Set;
 
 @Repository
 public class ImageRecordsRepositoryImpl implements ImageRecordsRepositoryCustom {
@@ -34,7 +35,7 @@ public class ImageRecordsRepositoryImpl implements ImageRecordsRepositoryCustom 
         return mongoTemplate.exists(
                 Query.query(Criteria.where(ImageRecord.Fields.name).is(name))
                         .addCriteria(Criteria.where(ImageRecord.Fields.uploadStatus)
-                                .in(ImmutableSet.of(ImageRecord.UploadStatus.pending, ImageRecord.UploadStatus.succeeded))),
+                                .in(Set.of(ImageRecord.UploadStatus.pending, ImageRecord.UploadStatus.succeeded))),
                 ImageRecord.class);
     }
 }

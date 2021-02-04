@@ -1,6 +1,5 @@
 package imagerepo.apis;
 
-import com.google.common.collect.ImmutableMap;
 import imagerepo.auth.models.AuthenticatedUser;
 import imagerepo.auth.models.LoginCredentials;
 import org.springframework.http.*;
@@ -61,7 +60,7 @@ public class AuthService {
     }
 
     public ResponseEntity<Void> register(LoginCredentials creds) {
-        Map<String, String> payload = ImmutableMap.of(
+        Map<String, String> payload = Map.of(
                 "username", creds.getUsername(),
                 "password", creds.getPassword());
 

@@ -1,6 +1,5 @@
 package imagerepo.controllers;
 
-import com.google.common.collect.ImmutableList;
 import imagerepo.auth.AuthUtils;
 import imagerepo.auth.AuthenticatedHttpServletRequest;
 import imagerepo.auth.models.AuthenticatedUser;
@@ -41,7 +40,7 @@ public class ImageRepoControllerTest {
     @Test
     public void testGetListOfImages() {
         // Arrange
-        List<ImageRecord> expected = ImmutableList.of(mock(ImageRecord.class), mock(ImageRecord.class));
+        List<ImageRecord> expected = List.of(mock(ImageRecord.class), mock(ImageRecord.class));
         when(service.getImages()).thenReturn(expected);
 
         // Act
