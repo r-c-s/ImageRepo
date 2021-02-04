@@ -9,7 +9,6 @@ import rcs.auth.api.models.AuthenticatedUser;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletRequestWrapper;
-import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -68,7 +67,6 @@ public class AuthUtilsTest {
         // Arrange
         HttpServletRequestWrapper request = mock(HttpServletRequestWrapper.class);
         HttpServletRequest delegateRequest = mock(HttpServletRequest.class);
-        AuthenticatedUser loggedInUser = mock(AuthenticatedUser.class);
 
         when(request.getRequest())
                 .thenReturn(delegateRequest);
@@ -85,7 +83,7 @@ public class AuthUtilsTest {
         // Arrange
         HttpServletRequest request = mock(HttpServletRequest.class);
 
-        // Act & assert
+        // Act
         Optional<AuthenticatedUser> actual = target.tryGetLoggedInUser(request);
 
         // Assert
