@@ -28,7 +28,7 @@ AuthService must be running.
 ##### Run application
 
 <pre>
-java -jar "ImageRepo-1.0-SNAPSHOT.jar" --app.properties=APP_PROPERTIES_FILE 
+java -jar target/ImageRepo-1.0-SNAPSHOT.jar --app.properties=APP_PROPERTIES_FILE 
 </pre>
 
 ##### Base app properties
