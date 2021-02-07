@@ -4,9 +4,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.data.mongodb.MongoDbFactory;
+import org.springframework.data.mongodb.MongoDatabaseFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.SimpleMongoClientDbFactory;
+import org.springframework.data.mongodb.core.SimpleMongoClientDatabaseFactory;
 
 @Configuration
 @PropertySource("file:${app.properties}")
@@ -16,8 +16,8 @@ public class MongoConfig {
     private String mongodbUri;
 
     @Bean
-    public MongoDbFactory mongoDbFactory() {
-        return new SimpleMongoClientDbFactory(mongodbUri);
+    public MongoDatabaseFactory mongoDbFactory() {
+        return new SimpleMongoClientDatabaseFactory(mongodbUri);
     }
 
     @Bean
