@@ -48,6 +48,8 @@ public class ImageRepoServiceIT {
     private AuthService authService;
     private ImageRepoService target;
 
+    private final String filename = "test file.pdf";
+
     @Before
     public void setup() {
         RestTemplate template = new TestRestTemplate().getRestTemplate();
@@ -81,8 +83,6 @@ public class ImageRepoServiceIT {
     @Test
     public void testGetImages() {
         // Arrange
-        String filename = "san diego.jpg";
-
         LocalDateTime beforeUpload = LocalDateTime.now();
         target.uploadImageRequest(userA, filename);
         LocalDateTime afterUpload = LocalDateTime.now();
@@ -96,17 +96,16 @@ public class ImageRepoServiceIT {
 
         ImageRecord record = records.get(0);
         assertThat(record.getName()).isEqualTo(filename);
-        assertThat(record.getType()).isEqualTo("image/jpeg");
+        assertThat(record.getType()).isEqualTo("application/pdf");
         assertThat(record.getUsername()).isEqualTo(userA.getUsername());
         assertThat(record.getDateUploaded()).isBetween(beforeUpload, afterUpload);
         assertThat(record.getUploadStatus()).isEqualTo(ImageRecord.UploadStatus.succeeded);
-        assertThat(record.getUrl()).isEqualTo(imageRepoServiceBaseUrl + "/imagerepo/api/images/san+diego.jpg");
+        assertThat(record.getUrl()).isEqualTo(imageRepoServiceBaseUrl + "/imagerepo/api/images/test+file.pdf");
     }
 
     @Test
     public void testGetImage() throws IOException {
         // Arrange
-        String filename = "san diego.jpg";
         target.uploadImageRequest(userA, filename);
 
         // Act
@@ -120,7 +119,6 @@ public class ImageRepoServiceIT {
     @Test
     public void testUploadImageHappyPath() {
         // Arrange
-        String filename = "san diego.jpg";
 
         // Act
         LocalDateTime beforeUpload = LocalDateTime.now();
@@ -128,14 +126,14 @@ public class ImageRepoServiceIT {
         LocalDateTime afterUpload = LocalDateTime.now();
 
         // Assert
-        String expectedUrl = imageRepoServiceBaseUrl + "/imagerepo/api/images/san+diego.jpg";
+        String expectedUrl = imageRepoServiceBaseUrl + "/imagerepo/api/images/test+file.pdf";
 
         assertThat(response.getStatusCodeValue()).isEqualTo(201);
         assertThat(response.getHeaders().getLocation().toString()).isEqualTo(expectedUrl);
 
         ImageRecord record = response.getBody();
         assertThat(record.getName()).isEqualTo(filename);
-        assertThat(record.getType()).isEqualTo("image/jpeg");
+        assertThat(record.getType()).isEqualTo("application/pdf");
         assertThat(record.getUsername()).isEqualTo(userA.getUsername());
         assertThat(record.getDateUploaded()).isBetween(beforeUpload, afterUpload);
         assertThat(record.getUploadStatus()).isEqualTo(ImageRecord.UploadStatus.succeeded);
@@ -145,7 +143,6 @@ public class ImageRepoServiceIT {
     @Test
     public void testUploadImageAlreadyExists() {
         // Arrange
-        String filename = "san diego.jpg";
         target.uploadImageRequest(userA, filename);
 
         // Act
@@ -158,7 +155,6 @@ public class ImageRepoServiceIT {
     @Test
     public void testDeleteImageHappyPath() {
         // Arrange
-        String filename = "san diego.jpg";
         target.uploadImageRequest(userA, filename);
 
         // Act
@@ -180,8 +176,6 @@ public class ImageRepoServiceIT {
     @Test
     public void testNotAllowedToDeleteOtherUsersImages() {
         // Arrange
-        String filename = "san diego.jpg";
-
         target.uploadImageRequest(userA, filename);
 
         // Act
@@ -206,7 +200,6 @@ public class ImageRepoServiceIT {
     @Test
     public void testAdminsCanDeleteAnyImage() {
         // Arrange
-        String filename = "san diego.jpg";
         target.uploadImageRequest(userA, filename);
 
         // Act

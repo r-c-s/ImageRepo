@@ -29,12 +29,6 @@ public class ImageRepoService {
 
     private static final Logger logger = LoggerFactory.getLogger(ImageRepoService.class);
 
-    private static final Set<String> allowedContentTypes = Set.of(
-            ContentType.IMAGE_PNG, ContentType.IMAGE_BMP, ContentType.IMAGE_GIF, ContentType.IMAGE_JPEG)
-            .stream()
-            .map(Object::toString)
-            .collect(Collectors.toSet());
-
     private ImageRecordsRepository imageRecordsRepository;
     private ImageStorageService imageStorageService;
     private String baseUrl;
@@ -61,19 +55,16 @@ public class ImageRepoService {
 
     @Transactional
     public ImageRecord uploadImage(AuthenticatedUser user, MultipartFile file, LocalDateTime timestamp) {
-        String contentType = file.getContentType();
-        if (!allowedContentTypes.contains(contentType)) {
-            throw new ImageTypeNotAllowedException(contentType, allowedContentTypes);
-        }
-
         String filename = file.getOriginalFilename();
+
+        // todo: create a directory per each user, decide what to do with clashing names
         if (imageRecordsRepository.isPendingOrSucceeded(filename)) {
             throw new ImageWithNameAlreadyExistsException(filename);
         }
 
         ImageRecord record = new ImageRecord(
                 filename,
-                contentType,
+                file.getContentType(),
                 user.getUsername(),
                 timestamp,
                 ImageRecord.UploadStatus.pending,
