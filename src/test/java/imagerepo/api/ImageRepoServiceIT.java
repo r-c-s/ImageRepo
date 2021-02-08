@@ -22,7 +22,7 @@ import rcs.auth.api.AuthService;
 import rcs.auth.api.models.LoginCredentials;
 
 import java.io.IOException;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -83,9 +83,9 @@ public class ImageRepoServiceIT {
         // Arrange
         String filename = "san diego.jpg";
 
-        Date beforeUpload = new Date();
+        LocalDateTime beforeUpload = LocalDateTime.now();
         target.uploadImageRequest(userA, filename);
-        Date afterUpload = new Date();
+        LocalDateTime afterUpload = LocalDateTime.now();
 
         // Act
         ResponseEntity<List<ImageRecord>> response = target.getImagesRequest();
@@ -123,9 +123,9 @@ public class ImageRepoServiceIT {
         String filename = "san diego.jpg";
 
         // Act
-        Date beforeUpload = new Date();
+        LocalDateTime beforeUpload = LocalDateTime.now();
         ResponseEntity<ImageRecord> response = target.uploadImageRequest(userA, filename);
-        Date afterUpload = new Date();
+        LocalDateTime afterUpload = LocalDateTime.now();
 
         // Assert
         String expectedUrl = imageRepoServiceBaseUrl + "/imagerepo/api/images/san+diego.jpg";

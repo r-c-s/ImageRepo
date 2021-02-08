@@ -14,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 import rcs.auth.api.models.AuthenticatedUser;
 
 import java.io.IOException;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,10 +40,14 @@ public class ImageRepoServiceTest {
     @Test
     public void testGetImages() {
         // Arrange
+        LocalDateTime date1 = LocalDateTime.now();
+        LocalDateTime date2 = LocalDateTime.now();
+        LocalDateTime date3 = LocalDateTime.now();
+
         List<ImageRecord> repositoryResponse = List.of(
-                new ImageRecord("image1.jpg", "image/jpeg", "username", new Date(1), ImageRecord.UploadStatus.succeeded, null),
-                new ImageRecord("image2.jpg", "image/jpeg", "username", new Date(2), ImageRecord.UploadStatus.pending, null),
-                new ImageRecord("image2.jpg", "image/jpeg", "username", new Date(2), ImageRecord.UploadStatus.failed, null));
+                new ImageRecord("image1.jpg", "image/jpeg", "username", date1, ImageRecord.UploadStatus.succeeded, null),
+                new ImageRecord("image2.jpg", "image/jpeg", "username", date2, ImageRecord.UploadStatus.pending, null),
+                new ImageRecord("image2.jpg", "image/jpeg", "username", date3, ImageRecord.UploadStatus.failed, null));
 
         when(imageRecordsRepository.findAll()).thenReturn(repositoryResponse);
 
@@ -52,9 +56,9 @@ public class ImageRepoServiceTest {
 
         // Assert
         List<ImageRecord> expected = List.of(
-                new ImageRecord("image1.jpg", "image/jpeg", "username", new Date(1), ImageRecord.UploadStatus.succeeded, baseUrl + "/imagerepo/api/images/image1.jpg"),
-                new ImageRecord("image2.jpg", "image/jpeg", "username", new Date(2), ImageRecord.UploadStatus.pending, null),
-                new ImageRecord("image2.jpg", "image/jpeg", "username", new Date(2), ImageRecord.UploadStatus.failed, null));
+                new ImageRecord("image1.jpg", "image/jpeg", "username", date1, ImageRecord.UploadStatus.succeeded, baseUrl + "/imagerepo/api/images/image1.jpg"),
+                new ImageRecord("image2.jpg", "image/jpeg", "username", date2, ImageRecord.UploadStatus.pending, null),
+                new ImageRecord("image2.jpg", "image/jpeg", "username", date3, ImageRecord.UploadStatus.failed, null));
 
         assertThat(actual).usingFieldByFieldElementComparator().isEqualTo(expected);
     }
@@ -77,7 +81,7 @@ public class ImageRepoServiceTest {
         // Arrange
         String username = "username";
         String filename = "filename";
-        Date timestamp = new Date(123);
+        LocalDateTime timestamp = LocalDateTime.now();
         String type = "image/jpeg";
 
         AuthenticatedUser user = mock(AuthenticatedUser.class);
@@ -109,7 +113,7 @@ public class ImageRepoServiceTest {
         // Arrange
         String username = "username";
         String filename = "filename";
-        Date timestamp = new Date(123);
+        LocalDateTime timestamp = LocalDateTime.now();
         String type = "image/jpeg";
 
         AuthenticatedUser user = mock(AuthenticatedUser.class);
@@ -141,7 +145,7 @@ public class ImageRepoServiceTest {
         // Arrange
         String username = "username";
         String filename = "filename";
-        Date timestamp = new Date(123);
+        LocalDateTime timestamp = LocalDateTime.now();
         String type = "image/jpeg";
 
         AuthenticatedUser user = mock(AuthenticatedUser.class);
@@ -165,7 +169,7 @@ public class ImageRepoServiceTest {
         // Arrange
         String username = "username";
         MultipartFile file = mock(MultipartFile.class);
-        Date timestamp = new Date(123);
+        LocalDateTime timestamp = LocalDateTime.now();
 
         AuthenticatedUser user = mock(AuthenticatedUser.class);
         when(user.getUsername()).thenReturn(username);

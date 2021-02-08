@@ -7,7 +7,7 @@ import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 @Getter
 @Setter
@@ -30,7 +30,7 @@ public class ImageRecord {
     private String name;
     private String type;
     private String username;
-    private Date dateUploaded;
+    private LocalDateTime dateUploaded;
     private UploadStatus uploadStatus;
     @Transient
     private String url;

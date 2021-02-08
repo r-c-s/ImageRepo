@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,7 +33,7 @@ public class ImageRecordsRepositoryImplTestInMemory extends InMemoryMongoReposit
                 "image.png",
                 "image/png",
                 "userId",
-                new Date(1),
+                LocalDateTime.now(),
                 ImageRecord.UploadStatus.pending,
                 null);
 
@@ -58,7 +59,7 @@ public class ImageRecordsRepositoryImplTestInMemory extends InMemoryMongoReposit
                 "image.png",
                 "image/png",
                 "userId",
-                new Date(1),
+                LocalDateTime.now(),
                 status,
                 null);
 

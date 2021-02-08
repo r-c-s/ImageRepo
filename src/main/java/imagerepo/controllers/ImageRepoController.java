@@ -15,7 +15,7 @@ import javax.activation.MimetypesFileTypeMap;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.net.URI;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -54,7 +54,7 @@ public class ImageRepoController {
             @RequestParam("file") MultipartFile file,
             HttpServletRequest request) {
         return authUtils.tryGetLoggedInUser(request)
-                .map(user -> imageRepoService.uploadImage(user, file, new Date()))
+                .map(user -> imageRepoService.uploadImage(user, file, LocalDateTime.now()))
                 .map(record -> {
                     boolean created = record.getUploadStatus().equals(ImageRecord.UploadStatus.succeeded);
                     return (created

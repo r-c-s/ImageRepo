@@ -18,7 +18,7 @@ import rcs.auth.api.models.AuthenticatedUser;
 
 import java.io.IOException;
 import java.net.URLEncoder;
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -60,7 +60,7 @@ public class ImageRepoService {
     }
 
     @Transactional
-    public ImageRecord uploadImage(AuthenticatedUser user, MultipartFile file, Date timestamp) {
+    public ImageRecord uploadImage(AuthenticatedUser user, MultipartFile file, LocalDateTime timestamp) {
         String contentType = file.getContentType();
         if (!allowedContentTypes.contains(contentType)) {
             throw new ImageTypeNotAllowedException(contentType, allowedContentTypes);
