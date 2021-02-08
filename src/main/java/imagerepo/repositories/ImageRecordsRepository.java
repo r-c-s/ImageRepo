@@ -7,6 +7,5 @@ import java.util.List;
 
 public interface ImageRecordsRepository extends MongoRepository<ImageRecord, String>, ImageRecordsRepositoryCustom {
 
-    List<ImageRecord> findAll();
     ImageRecord findByName(String name);
 }
