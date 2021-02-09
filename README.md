@@ -1,6 +1,6 @@
-## Image Repo
+## File Upload
 
-A simple application for uploading images
+A simple application for uploading files
 
 #### Dependencies
 * [AuthApi](https://github.com/r-c-s/AuthApi)

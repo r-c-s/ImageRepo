@@ -11,8 +11,8 @@
         <relativePath/>
     </parent>
 
-    <groupId>imagerepo</groupId>
-    <artifactId>ImageRepo</artifactId>
+    <groupId>fileupload</groupId>
+    <artifactId>FileUpload</artifactId>
     <version>1.0-SNAPSHOT</version>
 
     <properties>
