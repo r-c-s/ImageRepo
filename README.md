@@ -1,6 +1,6 @@
 ## File Upload
 
-A simple application for uploading files
+A simple SpringBoot application for uploading files
 
 <br>
 <hr>
