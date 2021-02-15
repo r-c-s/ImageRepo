@@ -11,7 +11,7 @@
         <relativePath/>
     </parent>
 
-    <groupId>fileupload</groupId>
+    <groupId>rcs</groupId>
     <artifactId>FileUpload</artifactId>
     <version>1.0-SNAPSHOT</version>
 
