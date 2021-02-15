@@ -72,13 +72,13 @@ local.storage.dir=LOCAL_STORAGE_DIR
 ##### Register on Auth service
 
 <pre>
-curl -X POST authhost:authport/auth/api/users -H "Content-type:application/json" -d "{"username":"USERNAME","password":"PASSWORD"}"
+curl -X POST authhost:authport/api/users -H "Content-type:application/json" -d "{"username":"USERNAME","password":"PASSWORD"}"
 </pre>
 
 ##### Login on Auth service
 
 <pre>
-curl -X POST authhost:authport/auth/login -d "username=USERNAME&password=PASSWORD" -c cookies
+curl -X POST authhost:authport/login -d "username=USERNAME&password=PASSWORD" -c cookies
 </pre>
 
 Use the cookies from above to make requests
