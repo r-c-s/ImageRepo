@@ -1,7 +1,5 @@
 package fileupload.controllers;
 
-import fileupload.auth.AuthUtils;
-import fileupload.auth.AuthenticatedHttpServletRequest;
 import fileupload.models.FileUploadRecord;
 import fileupload.services.FileUploadService;
 import junitparams.JUnitParamsRunner;
@@ -13,6 +11,8 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.multipart.MultipartFile;
+import rcs.auth.api.AuthUtils;
+import rcs.auth.api.AuthenticatedHttpServletRequest;
 import rcs.auth.api.models.AuthenticatedUser;
 
 import java.io.IOException;
@@ -75,7 +75,8 @@ public class FileUploadControllerTest {
     public void testUploadFile(
             FileUploadRecord.UploadStatus recordStatus,
             String url,
-            int expectedHttpStatus) throws URISyntaxException {
+            int expectedHttpStatus) {
+
         // Arrange
         MultipartFile file = mock(MultipartFile.class);
         url = url.equals("null") ? null : url;

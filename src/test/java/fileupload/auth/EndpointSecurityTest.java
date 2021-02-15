@@ -7,6 +7,7 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import rcs.auth.api.AuthUtils;
 import rcs.auth.api.models.AuthenticatedUser;
 
 import javax.servlet.ServletRequest;

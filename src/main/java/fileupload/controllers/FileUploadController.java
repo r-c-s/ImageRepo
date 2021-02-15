@@ -1,6 +1,5 @@
 package fileupload.controllers;
 
-import fileupload.auth.AuthUtils;
 import fileupload.models.FileUploadRecord;
 import fileupload.services.FileUploadService;
 import lombok.SneakyThrows;
@@ -10,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import rcs.auth.api.AuthUtils;
 
 import javax.activation.MimetypesFileTypeMap;
 import javax.servlet.http.HttpServletRequest;

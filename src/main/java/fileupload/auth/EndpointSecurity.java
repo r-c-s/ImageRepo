@@ -2,6 +2,7 @@ package fileupload.auth;
 
 import fileupload.repositories.FileUploadRecordsRepository;
 import org.springframework.stereotype.Component;
+import rcs.auth.api.AuthUtils;
 
 import javax.servlet.ServletRequest;
 
