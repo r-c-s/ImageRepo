@@ -2,10 +2,18 @@
 
 A simple application for uploading files
 
+<br>
+<hr>
+<br>
+
 #### Dependencies
 * [AuthApi](https://github.com/r-c-s/AuthApi)
 * [MongoDB](https://docs.mongodb.com/manual/installation/)
 * TODO: steps to build trust store required for S3
+
+<br>
+<hr>
+<br>
 
 ##### Build
 
@@ -56,3 +64,21 @@ amazon.aws.s3.bucket=BUCKET
 <pre>
 local.storage.dir=LOCAL_STORAGE_DIR
 </pre>
+
+<br>
+<hr>
+<br>
+
+##### Register on Auth service
+
+<pre>
+curl -X POST authhost:authport/auth/api/users -H "Content-type:application/json" -d "{"username":"USERNAME","password":"PASSWORD"}"
+</pre>
+
+##### Login on Auth service
+
+<pre>
+curl -X POST authhost:authport/auth/login -d "username=USERNAME&password=PASSWORD" -c cookies
+</pre>
+
+Use the cookies from above to make requests
