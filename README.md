@@ -7,7 +7,7 @@ A simple SpringBoot application for uploading files
 <br>
 
 #### Dependencies
-* [AuthApi](https://github.com/r-c-s/AuthApi)
+* [Auth](https://github.com/r-c-s/Auth) & [AuthApi](https://github.com/r-c-s/AuthApi)
 * [MongoDB](https://docs.mongodb.com/manual/installation/)
 * TODO: steps to build trust store required for S3
 
